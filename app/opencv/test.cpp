@@ -8,14 +8,16 @@ using namespace cv;
 //cv::namedWindow("Output Image");
 //cv::imshow("Output Image",result);
 
+#define RUN_TEST printf("RUNTEST !!! __FILE__ : %s , __LINE__ : %d \r\n",__FILE__,__LINE__);
+
 int main()
 {
-    Mat image, image_gray;      //定义两个Mat变量，用于存储每一帧的图像
+    Mat image,image2, image_gray;      //定义两个Mat变量，用于存储每一帧的图像
 
 #if 1
     VideoCapture capture(0);
 
-    capture.set(CV_CAP_PROP_FRAME_HEIGHT,320);
+    capture.set(CV_CAP_PROP_FRAME_WIDTH,320);
     capture.set(CV_CAP_PROP_FRAME_HEIGHT,240);
 
     if(capture.isOpened())
@@ -50,16 +52,28 @@ int main()
     vector<Rect> eyeRect;
     vector<Rect> faceRect;
 
-	
 
+    for(;;)
+    {
+    	printf("111111111111111uuuuuuuuuuu111\r\n");
+    	capture >> image;
+
+        printf("rows: %d %d channels : %d\r\n",image.rows,image.cols,image.channels());
+	break;
+    	printf("222222222222222222tttttt22222\r\n");
+    }
+
+    resize(image, image2, Size(image.cols/4, image.rows/4), 0, 0);
     //for(;;){};
-
-    cvtColor(image, image_gray, CV_BGR2GRAY);//转为灰度图
+    RUN_TEST;
+    cvtColor(image2, image_gray, CV_BGR2GRAY);//转为灰度图
+    RUN_TEST;
     equalizeHist(image_gray, image_gray);//直方图均衡化，增加对比度方便处理
-
+    RUN_TEST;
 
     //检测关于眼睛部位位置
     eye_Classifier.detectMultiScale(image_gray, eyeRect, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
+    RUN_TEST;
     for (size_t eyeIdx = 0; eyeIdx < eyeRect.size(); eyeIdx++)
     {   
         rectangle(image, eyeRect[eyeIdx], Scalar(0, 0, 255));   //用矩形画出检测到的位置
@@ -70,9 +84,10 @@ int main()
     for (size_t i = 0; i < faceRect.size(); i++)
     {   
         rectangle(image, faceRect[i], Scalar(0, 0, 255));      //用矩形画出检测到的位置
+        
     }
 
-printf("Output ImageOutput ImageOutput Image");
+        printf("Output ImageOutput ImageOutput Image");
 
  	return 0; 
 
