@@ -7,7 +7,7 @@
 #include <opencv2/calib3d/calib3d.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 namespace Ui {
 class MainWindow;
@@ -23,7 +23,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    VideoCapture *cap;
+    cv::VideoCapture *cap;
 };
 
 #endif // MAINWINDOW_H
