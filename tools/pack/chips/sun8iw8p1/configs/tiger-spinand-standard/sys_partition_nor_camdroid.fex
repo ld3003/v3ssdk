@@ -53,8 +53,8 @@ size = 1024
 
 [partition]
     name         = system
-; 184320 = 90M    
-    size         = 184320
+; 1048576 = 512M    
+    size         = 1048576
 ; 196608 = 96M
 ;   size         = 196608
     downloadfile = "rootfs.fex"

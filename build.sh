@@ -109,7 +109,7 @@ function pack()
 
 	copy_file_to_rootfs
 	
-	$HOSTTOOLS_DIR/make_ext4fs -s -l 90M /tmp/rootfs-ext4.img $ROOTFS_DIR
+	$HOSTTOOLS_DIR/make_ext4fs -s -l 200M /tmp/rootfs-ext4.img $ROOTFS_DIR
 	
 	cd $PACKTOOLS_DIR
 	

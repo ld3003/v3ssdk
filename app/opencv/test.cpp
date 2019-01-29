@@ -22,6 +22,10 @@ int main()
     {
         cout<<"success"<<endl;
     }
+    else
+    {
+	    cout << "errr" << endl;
+    }
 
 #endif
 

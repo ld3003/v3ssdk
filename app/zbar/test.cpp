@@ -59,8 +59,11 @@ int main(int c , char **argv)
 {
 	Mat img;
 	string result;
-	img = imread("earth.jpg", CV_LOAD_IMAGE_UNCHANGED);
-	result = GetQR(img);
-	std::cout << result <<endl;
+	for(;;)
+	{
+		img = imread("qr.jpg", CV_LOAD_IMAGE_UNCHANGED);
+		result = GetQR(img);
+		std::cout << result <<endl;
+	}
 	return 0;
 }
