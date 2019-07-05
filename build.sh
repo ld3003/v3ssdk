@@ -83,7 +83,7 @@ function build_buildroot()
 	cd $BUILDROOT_DIR
 	mkdir -p $BUILDROOT_OUT_DIR
 
-	#cp configs/mangopi_defconfig $BUILDROOT_OUT_DIR/.config
+	cp configs/fuckpi_defconfig $BUILDROOT_OUT_DIR/.config
 
 	make O=$BUILDROOT_OUT_DIR oldconfig
 	
