@@ -169,7 +169,7 @@ int main(int argc, const char **argv)
 		lcd_open();
 	}
 
-        v4l2_open(&camera, 0);
+        v4l2_open(&camera, 1);
 	v4l2_enum_fmt(&camera);
 	v4l2_query_cap(&camera);
 	v4l2_s_input(&camera, 0);
@@ -197,6 +197,8 @@ int main(int argc, const char **argv)
 		if (frame_len <= 0) {
 			continue;
 		}
+		
+		printf("video_length %d\n",frame_len);
 
 		time_mark = get_timestamp();
 		NV12ToARGB(frame_ptr, v4l2_width(&camera),

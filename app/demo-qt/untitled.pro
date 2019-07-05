@@ -26,15 +26,20 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+        camthread.cpp \
+        detectthread.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+        camthread.h \
+        detectthread.h
 
 FORMS += \
         mainwindow.ui
 
-LIBS    += -ljpeg -lopencv_core -lopencv_objdetect -lopencv_imgproc -lopencv_videoio
+LIBS    += -ljpeg -lopencv_core -lopencv_objdetect -lopencv_imgproc -lopencv_videoio -lyuv -lzbar
+LIBS    += ./libfacedetection/build/libfacedetection.a
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -85,7 +85,7 @@ function build_buildroot()
 
 	#cp configs/mangopi_defconfig $BUILDROOT_OUT_DIR/.config
 
-	make O=$BUILDROOT_OUT_DIR oldconfig
+	#make O=$BUILDROOT_OUT_DIR oldconfig
 	
 	make O=$BUILDROOT_OUT_DIR
 
@@ -109,7 +109,7 @@ function pack()
 
 	copy_file_to_rootfs
 	
-	$HOSTTOOLS_DIR/make_ext4fs -s -l 200M /tmp/rootfs-ext4.img $ROOTFS_DIR
+	$HOSTTOOLS_DIR/make_ext4fs -s -l 400M /tmp/rootfs-ext4.img $ROOTFS_DIR
 	
 	cd $PACKTOOLS_DIR
 	
@@ -127,12 +127,12 @@ function build_demos()
   	$TOP_DIR/buildroot/out/host/bin/qmake
 	make
 
-	cd $APP_DIR/opencv
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 test
+	#cd $APP_DIR/opencv
+	#make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 test
 	#./build.sha
 
-	cd $APP_DIR/zbar
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 test
+	#cd $APP_DIR/zbar
+	#make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 test
 
 
 }

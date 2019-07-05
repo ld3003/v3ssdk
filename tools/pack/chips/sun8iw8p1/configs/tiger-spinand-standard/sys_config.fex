@@ -299,7 +299,7 @@ uart_rx         = port:PB01<2><1><default><default>
 ;spi_cs_bitmap  = SPI bit mapping
 ;----------------------------------------------------------------------------------
 [spi0]
-spi_used       = 0
+spi_used       = 1
 spi_cs_bitmap  = 1
 spi_mosi       = port:PC03<3><default><default><default>
 spi_miso       = port:PC00<3><default><default><default>
@@ -311,10 +311,10 @@ spi_cs0        = port:PC02<3><1><default><default>
 ;spi_dev_num: number of spi devices
 ;----------------------------------------------------------------------------------
 [spi_devices]
-spi_dev_num = 1
+spi_dev_num = 0
 
 [spinand]
-spinand_used = 1
+spinand_used = 0
 
 ;----------------------------------------------------------------------------------
 ;[spi_board0] spi device configuration
@@ -421,40 +421,40 @@ cooler3 =  "648000 4 4294967295 0"
 ;lcd0_saturation       (LCD saturation, 0~100)
 ;lcd0_hue              (LCD hue, 0~100)
 ;----------------------------------------------------------------------------------
-[disp_init]
-disp_init_enable         = 1
-disp_mode                = 0
+;[disp_init]
+;disp_init_enable         = 0
+;disp_mode                = 0
 
-screen0_output_type      = 1
-screen0_output_mode      = 4
+;screen0_output_type      = 1
+;screen0_output_mode      = 4
 
-screen1_output_type      = 1
-screen1_output_mode      = 4
+;screen1_output_type      = 1
+;screen1_output_mode      = 4
 
-fb0_format               = 0
-fb0_pixel_sequence       = 0
-fb0_scaler_mode_enable   = 0
-fb0_width                = 0
-fb0_height               = 0
+;fb0_format               = 0
+;fb0_pixel_sequence       = 0
+;fb0_scaler_mode_enable   = 0
+;fb0_width                = 0
+;fb0_height               = 0
 
-fb1_format               = 0
-fb1_pixel_sequence       = 0
-fb1_scaler_mode_enable   = 0
-fb1_width                = 0
-fb1_height               = 0
+;fb1_format               = 0
+;fb1_pixel_sequence       = 0
+;fb1_scaler_mode_enable   = 0
+;fb1_width                = 0
+;fb1_height               = 0
 
-lcd0_backlight           = 200
-lcd1_backlight           = 50
+;lcd0_backlight           = 200
+;lcd1_backlight           = 50
 
-lcd0_bright              = 50
-lcd0_contrast            = 50
-lcd0_saturation          = 57
-lcd0_hue                 = 50
+;lcd0_bright              = 50
+;lcd0_contrast            = 50
+;lcd0_saturation          = 57
+;lcd0_hue                 = 50
 
-lcd1_bright              = 50
-lcd1_contrast            = 50
-lcd1_saturation          = 57
-lcd1_hue                 = 50
+;lcd1_bright              = 50
+;lcd1_contrast            = 50
+;lcd1_saturation          = 57
+;lcd1_hue                 = 50
 
 ;----------------------------------------------------------------------------------
 ;lcd0 configuration
@@ -488,69 +488,69 @@ lcd1_hue                 = 50
 ;                      decrease it while lcd is not bright enough; increase while lcd is too bright
 ;smart_color           90:normal lcd screen 65:retina lcd screen(9.7inch)
 ;----------------------------------------------------------------------------------
-[lcd0_para]
-lcd_used            = 1
-lcd_driver_name     = "vs043con08v0"
-lcd_if              = 0
-lcd_x               = 480
-lcd_y               = 272
-lcd_width           = 0
-lcd_height          = 0
-lcd_dclk_freq       = 10
-lcd_pwm_used        = 1
-lcd_pwm_ch          = 0
-lcd_pwm_freq        = 50000
-lcd_pwm_pol         = 1
-lcd_pwm_max_limit   = 255
-lcd_hbp             = 43
-lcd_ht              = 531
-lcd_hspw            = 1
-lcd_vbp             = 12
-lcd_vt              = 288
-lcd_vspw            = 1
-lcd_frm             = 0
-lcd_hv_clk_phase    = 0
-lcd_hv_sync_polarity = 0
-lcd_gamma_en        = 0
-lcd_bright_curve_en = 1
-lcd_cmap_en         = 0
+;[lcd0_para]
+;lcd_used            = 0
+;lcd_driver_name     = "vs043con08v0"
+;lcd_if              = 0
+;lcd_x               = 480
+;lcd_y               = 272
+;lcd_width           = 0
+;lcd_height          = 0
+;lcd_dclk_freq       = 10
+;lcd_pwm_used        = 1
+;lcd_pwm_ch          = 0
+;lcd_pwm_freq        = 50000
+;lcd_pwm_pol         = 1
+;lcd_pwm_max_limit   = 255
+;lcd_hbp             = 43
+;lcd_ht              = 531
+;lcd_hspw            = 1
+;lcd_vbp             = 12
+;lcd_vt              = 288
+;lcd_vspw            = 1
+;lcd_frm             = 0
+;lcd_hv_clk_phase    = 0
+;lcd_hv_sync_polarity = 0
+;lcd_gamma_en        = 0
+;lcd_bright_curve_en = 1
+;lcd_cmap_en         = 0
 
-lcdgamma4iep        = 22
+;lcdgamma4iep        = 22
 
-lcd_bl_en           = port:PB2<1><0><default><1>
-lcd_power           = ""
+;lcd_bl_en           = port:PB2<1><0><default><1>
+;lcd_power           = ""
 
 ;lcd_gpio_0          = port:PB3<1><0><default><1>
-lcdd2               = port:PE04<3><0><default><default>
-lcdd3               = port:PE05<3><0><default><default>
-lcdd4               = port:PE06<3><0><default><default>
-lcdd5               = port:PE07<3><0><default><default>
-lcdd6               = port:PE08<3><0><default><default>
-lcdd7               = port:PE09<3><0><default><default>
-lcdd10              = port:PE10<3><0><default><default>
-lcdd11              = port:PE11<3><0><default><default>
-lcdd12              = port:PE12<3><0><default><default>
-lcdd13              = port:PE13<3><0><default><default>
-lcdd14              = port:PE14<3><0><default><default>
-lcdd15              = port:PE15<3><0><default><default>
-lcdd18              = port:PE16<3><0><default><default>
-lcdd19              = port:PE17<3><0><default><default>
-lcdd20              = port:PE18<3><0><default><default>
-lcdd21              = port:PE19<3><0><default><default>
+;lcdd2               = port:PE04<3><0><default><default>
+;lcdd3               = port:PE05<3><0><default><default>
+;lcdd4               = port:PE06<3><0><default><default>
+;lcdd5               = port:PE07<3><0><default><default>
+;lcdd6               = port:PE08<3><0><default><default>
+;lcdd7               = port:PE09<3><0><default><default>
+;lcdd10              = port:PE10<3><0><default><default>
+;lcdd11              = port:PE11<3><0><default><default>
+;lcdd12              = port:PE12<3><0><default><default>
+;lcdd13              = port:PE13<3><0><default><default>
+;lcdd14              = port:PE14<3><0><default><default>
+;lcdd15              = port:PE15<3><0><default><default>
+;lcdd18              = port:PE16<3><0><default><default>
+;lcdd19              = port:PE17<3><0><default><default>
+;lcdd20              = port:PE18<3><0><default><default>
+;lcdd21              = port:PE19<3><0><default><default>
 
-lcdd22              = port:PE23<3><0><default><default>
-lcdd23              = port:PE24<3><0><default><default>
+;lcdd22              = port:PE23<3><0><default><default>
+;lcdd23              = port:PE24<3><0><default><default>
 
-lcdclk              = port:PE00<3><0><3><default>
-lcdde               = port:PE01<3><0><3><default>
-lcdhsync            = port:PE02<3><0><3><default>
-lcdvsync            = port:PE03<3><0><3><default>
+;lcdclk              = port:PE00<3><0><3><default>
+;lcdde               = port:PE01<3><0><3><default>
+;lcdhsync            = port:PE02<3><0><3><default>
+;lcdvsync            = port:PE03<3><0><3><default>
 
 ;----------------------------------------------------------------------------------
 ;pwm config
 ;----------------------------------------------------------------------------------
 [pwm0_para]
-pwm_used            = 1
+pwm_used            = 0
 pwm_positive        = port:PB04<2><0><default><default>
 
 [pwm1_para]
@@ -676,7 +676,7 @@ vip_dev1_flash_mode      =
 vip_dev1_af_pwdn         =
 
 [csi1]
-vip_used                 = 0
+vip_used                 = 1
 vip_mode                 = 0
 vip_dev_qty              = 1
 vip_define_sensor_list   = 0
@@ -684,26 +684,32 @@ vip_csi_pck              = port:PE00<2><default><default><default>
 vip_csi_mck              = port:PE01<2><default><default><default>
 vip_csi_hsync            = port:PE02<2><default><default><default>
 vip_csi_vsync            = port:PE03<2><default><default><default>
-vip_csi_d0               = port:PE04<2><default><default><default>
-vip_csi_d1               = port:PE05<2><default><default><default>
-vip_csi_d2               = port:PE06<2><default><default><default>
-vip_csi_d3               = port:PE07<2><default><default><default>
-vip_csi_d4               = port:PE08<2><default><default><default>
-vip_csi_d5               = port:PE09<2><default><default><default>
-vip_csi_d6               = port:PE10<2><default><default><default>
-vip_csi_d7               = port:PE11<2><default><default><default>
-vip_csi_d8               = port:PE12<2><default><default><default>
+vip_csi_d0               = port:PE08<2><default><default><default>
+vip_csi_d1               = port:PE09<2><default><default><default>
+vip_csi_d2               = port:PE10<2><default><default><default>
+vip_csi_d3               = port:PE11<2><default><default><default>
+vip_csi_d4               = port:PE12<2><default><default><default>
+vip_csi_d5               = port:PE13<2><default><default><default>
+vip_csi_d6               = port:PE14<2><default><default><default>
+vip_csi_d7               = port:PE15<2><default><default><default>
+;vip_csi_d8               = port:PE12<2><default><default><default>
 ;vip_csi_d9               = port:PE13<2><default><default><default>
-vip_csi_d10               = port:PE14<2><default><default><default>
-vip_csi_d11               = port:PE15<2><default><default><default>
+;vip_csi_d10              = port:PE14<2><default><default><default>
+;vip_csi_d11              = port:PE15<2><default><default><default>
+;vip_csi_d12              = port:PE16<2><default><default><default>
+;vip_csi_d13              = port:PE17<2><default><default><default>
+;vip_csi_d14              = port:PE18<2><default><default><default>
+;vip_csi_d15              = port:PE19<2><default><default><default>
 
-vip_csi_sck               = port:PE21<2><default><default><default>
-vip_csi_sda               = port:PE22<2><default><default><default>
 
-vip_dev0_mname           = "ov5640"
+
+;vip_csi_sck               = port:PE21<2><default><default><default>
+;vip_csi_sda               = port:PE22<2><default><default><default>
+
+vip_dev0_mname           = "gc0308"
 vip_dev0_pos             = "front"
 vip_dev0_twi_id          = 4
-vip_dev0_twi_addr        = 0x78
+vip_dev0_twi_addr        = 0x42
 vip_dev0_isp_used        = 0
 vip_dev0_fmt             = 0
 vip_dev0_stby_mode       = 0
@@ -752,6 +758,7 @@ vip_dev1_pwdn            =
 vip_dev1_flash_en        =
 vip_dev1_flash_mode      =
 vip_dev1_af_pwdn         =
+
 
 
 ;-------------------------------------------------------------------------------
@@ -935,7 +942,7 @@ module_num = 6
 ;                3 - rtl8188eu, 4- rtl8723au(wifi+bt)
 ;--------------------------------------------------------------------------------
 [wifi_para]
-wifi_used          = 1
+wifi_used          = 0
 wifi_sdc_id        = 1
 wifi_usbc_id       =  
 wifi_usbc_type     =  
@@ -1184,7 +1191,7 @@ ir_rx               = port:PL04<2><1><default><default>
 ;pmu_temp_para16             --- temp  80 voltage
 ;--------------------------------------------------------------------------------------------------------
 [pmu1_para]
-pmu_used                   = 1
+pmu_used                   = 0
 pmu_id                     = 1
 pmu_twi_addr               = 0x34
 pmu_twi_id                 = 0

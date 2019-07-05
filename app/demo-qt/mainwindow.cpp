@@ -9,74 +9,59 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
 
-    vector<cv::Rect> eyeRect;
-    vector<cv::Rect> faceRect;
-    cv::Mat image,image2,image3,image_gray;
-
-    QImage Img;
-
+    showFullScreen();
     ui->setupUi(this);
 
-    cv::CascadeClassifier eye_Classifier;  //载入分类器
-    cv::CascadeClassifier face_cascade;    //载入分类器
+    timer = new QTimer(this);
+    qDebug() << "new VideoCapture";
+    camThread = new CamThread(cap);
+    //detThread = new DetectThread(camThread);
 
-    //加载分类训练器，OpenCv官方文档提供的xml文档，可以直接调用
-    //xml文档路径  opencv\sources\data\haarcascades
-    if (!eye_Classifier.load("./haarcascade_eye.xml"))  //需要将xml文档放在自己指定的路径下
-    {
-        cout << "Load haarcascade_eye.xml failed!" << endl;
-        //return 0;
-    }
+    connect(timer,SIGNAL(timeout()),this,SLOT(timerTimeout()));
+    connect(camThread,SIGNAL(imgReady(QImage)),this,SLOT(imgFlush(QImage)));
 
-    if (!face_cascade.load("./haarcascade_frontalface_alt.xml"))
-    {
-        cout << "Load haarcascade_frontalface_alt failed!" << endl;
-        //return 0;
-    }
+    camThread->start();
+    //timer->start(2000);
 
-    cap =  new cv::VideoCapture(0);
-    if(cap->isOpened())
-    {
-        cout<<"success"<<endl;
-    }
-    else
-    {
-        cout << "errr" << endl;
-    }
-
-    *cap >> image;
-
-    cv::resize(image, image2, cv::Size(image.cols/4, image.rows/4),0,0);
-
-    cv::cvtColor(image2, image3, CV_BGR2RGB);//颜色空间转换
-
-    Img = QImage((const uchar*)(image3.data), image3.cols, image3.rows, image3.cols * image3.channels(), QImage::Format_RGB888);
-
-
-    cv::cvtColor(image2, image_gray, CV_BGR2GRAY);//转为灰度图
-    cv::equalizeHist(image_gray, image_gray);//直方图均衡化，增加对比度方便处理
-
-    //检测关于眼睛部位位置
-    eye_Classifier.detectMultiScale(image_gray, eyeRect, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, cv::Size(30, 30));
-    for (size_t eyeIdx = 0; eyeIdx < eyeRect.size(); eyeIdx++)
-    {
-        rectangle(image, eyeRect[eyeIdx], cv::Scalar(0, 0, 255));   //用矩形画出检测到的位置
-    }
-
-    //检测关于脸部位置
-    face_cascade.detectMultiScale(image_gray, faceRect, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, cv::Size(30, 30));
-    for (size_t i = 0; i < faceRect.size(); i++)
-    {
-        rectangle(image, faceRect[i], cv::Scalar(0, 0, 255));      //用矩形画出检测到的位置
-
-    }
+    this->setGeometry(0,0,240,320);
 
 
 
 
-    ui->label->setPixmap(QPixmap::fromImage(Img));
+
 
 }
+
+void MainWindow::detectFace()
+{
+}
+
+void MainWindow::timerTimeout()
+{
+
+    timer->stop();
+    detThread->start();
+    detectFace();
+
+}
+
+void MainWindow::imgFlush(QImage img)
+{
+    qDebug() << "recv imgFlush";
+    ui->label->setPixmap(QPixmap::fromImage(img));
+}
+
+void MainWindow::dectFlush(QImage img)
+{
+
+}
+
+cv::Mat MainWindow::QImageToMat(QImage image)
+{
+    cv::Mat mat;
+    return mat;
+}
+
 
 MainWindow::~MainWindow()
 {
