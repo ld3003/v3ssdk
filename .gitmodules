@@ -5,3 +5,4 @@
 [submodule "linux-3.4"]
 	path = linux-3.4
 	url = https://github.com/ld3003/fuckpi-one-linux-3.4.git
+	branch = master
