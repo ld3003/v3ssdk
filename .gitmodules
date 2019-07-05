@@ -1,9 +1,6 @@
-[submodule "fuckpi_one_linux-3.4"]
-	path = fuckpi_one_linux-3.4
+[submodule "linux-3.4"]
+	path = linux-3.4
 	url = https://github.com/ld3003/fuckpi_one_linux-3.4.git
-[submodule "fuckpi_one_buildroot"]
-	path = fuckpi_one_buildroot
-	url = https://github.com/ld3003/fuckpi_one_buildroot.git
 [submodule "buildroot"]
 	path = buildroot
 	url = https://github.com/ld3003/fuckpi_one_buildroot.git
