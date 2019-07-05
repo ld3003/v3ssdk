@@ -153,7 +153,7 @@ function clean_demos()
 
 if [ $# -eq 0 ] ; then
 	build_buildroot
-	build_uboot
+	#build_uboot
 	build_kernel
 	build_demos
 	pack
