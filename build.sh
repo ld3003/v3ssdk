@@ -14,6 +14,8 @@ ROOTFS_OVERRIDE_DIR=$TOP_DIR/prebuilt/rootfs-override
 APP_DIR=$TOP_DIR/app
 BR_CROSS_COMPILE=$BUILDROOT_OUT_DIR/host/usr/bin/arm-buildroot-linux-gnueabihf-
 
+
+
 copy_file_list=(
     $ROOTFS_OVERRIDE_DIR/etc/inittab:$ROOTFS_DIR/etc/inittab
     $ROOTFS_OVERRIDE_DIR/etc/profile:$ROOTFS_DIR/etc/profile
@@ -83,7 +85,7 @@ function build_buildroot()
 	cd $BUILDROOT_DIR
 	mkdir -p $BUILDROOT_OUT_DIR
 
-	cp configs/fuckpi_defconfig $BUILDROOT_OUT_DIR/.config
+	#cp configs/fuckpi_defconfig $BUILDROOT_OUT_DIR/.config
 
 	make O=$BUILDROOT_OUT_DIR oldconfig
 	
@@ -119,6 +121,7 @@ function pack()
 
 function build_demos()
 {
+	
 
 	cd $APP_DIR/demo-camera/
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 demo-camera
@@ -133,6 +136,10 @@ function build_demos()
 
 	cd $APP_DIR/zbar
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 test
+
+	cd $APP_DIR/ncnn/build
+	cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/arm-buildroot-gnueabihf.toolchain.cmake ..
+	make
 
 
 }
