@@ -1,6 +1,7 @@
 #/bin/bash 
 
 LD_LIBRARY_PATH=
+PATH=/home/user1/fuckpi-one-sdk/buildroot/out/host/bin/:$PATH
 
 TOP_DIR=`pwd`
 
@@ -139,7 +140,9 @@ function build_demos()
 	cd $APP_DIR/zbar
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 test
 
-	cd $APP_DIR/ncnn/build
+	cd $APP_DIR/ncnn/
+	mkdir build
+	cd build
 	cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/arm-buildroot-gnueabihf.toolchain.cmake ..
 	make
 
