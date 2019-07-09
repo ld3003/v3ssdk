@@ -1,5 +1,7 @@
 #/bin/bash 
 
+LD_LIBRARY_PATH=
+
 TOP_DIR=`pwd`
 
 CROSS_COMPILE=$TOP_DIR/tools/external-toolchain/bin/arm-linux-gnueabi-    
@@ -85,11 +87,11 @@ function build_buildroot()
 	cd $BUILDROOT_DIR
 	mkdir -p $BUILDROOT_OUT_DIR
 
-	#cp configs/fuckpi_defconfig $BUILDROOT_OUT_DIR/.config
+	cp configs/mangopi_defconfig $BUILDROOT_OUT_DIR/.config
 
 	make O=$BUILDROOT_OUT_DIR oldconfig
 	
-	make O=$BUILDROOT_OUT_DIR
+	make O=$BUILDROOT_OUT_DIR 
 
 	rm -r $ROOTFS_DIR
 	mkdir -p $ROOTFS_DIR
