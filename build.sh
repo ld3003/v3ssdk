@@ -1,9 +1,10 @@
 #/bin/bash 
 
 LD_LIBRARY_PATH=
-PATH=/home/user1/fuckpi-one-sdk/buildroot/out/host/bin/:$PATH
-
 TOP_DIR=`pwd`
+
+PATH=$TOP_DIR/buildroot/out/host/bin/:$PATH
+
 
 CROSS_COMPILE=$TOP_DIR/tools/external-toolchain/bin/arm-linux-gnueabi-    
 UBOOT_DIR=$TOP_DIR/u-boot-2011.09
