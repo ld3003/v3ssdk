@@ -89,6 +89,8 @@ function build_buildroot()
 	cd $BUILDROOT_DIR
 	mkdir -p $BUILDROOT_OUT_DIR
 
+
+	cp $BUILDROOT_OUT_DIR/.config configs/mangopi_defconfig
 	cp configs/mangopi_defconfig $BUILDROOT_OUT_DIR/.config
 
 	make O=$BUILDROOT_OUT_DIR oldconfig
@@ -140,6 +142,10 @@ function build_demos()
 
 	cd $APP_DIR/zbar
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 test
+
+	cd $APP_DIR/curl
+	make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 test
+
 
 	cd $APP_DIR/ncnn/
 	mkdir build
