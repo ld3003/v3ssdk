@@ -1,5 +1,5 @@
-# v3s
-fuckpi_on_sdk
+# v3s sdk
+
 git clone --recursive https://github.com/ld3003/v3ssdk.git
 
 sudo apt-get install sudo apt-get install lib32z
