@@ -128,6 +128,19 @@ function pack()
 function build_demos()
 {
 	
+	cd $APP_DIR/ncnn/
+	mkdir build
+	cd build
+	cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/arm-buildroot-gnueabihf.toolchain.cmake ..
+	make
+
+	cd $APP_DIR/libfacedetection/
+	mkdir build
+	cd build
+	cmake ../
+	make
+
+
 
 	cd $APP_DIR/demo-camera/
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 demo-camera
@@ -147,11 +160,6 @@ function build_demos()
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 test
 
 
-	cd $APP_DIR/ncnn/
-	mkdir build
-	cd build
-	cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/arm-buildroot-gnueabihf.toolchain.cmake ..
-	make
 
 
 }

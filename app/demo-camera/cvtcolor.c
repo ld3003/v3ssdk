@@ -21,7 +21,7 @@ void rgb565_to_rgb32(uint8_t *src, int srcw, int srch, uint8_t *dst, uint8_t alp
 	while (size--) {
 		uint16_t t;
 		
-                if (!is_openmv_rgb565) {
+                if (!is_openmv_rgb565) { 
 			/* normal RGB565 */
 			t = *s;
 		} else {
