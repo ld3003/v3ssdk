@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 2.8)
 SET(CMAKE_C_COMPILER arm-buildroot-linux-gnueabihf-gcc)
 SET(CMAKE_CXX_COMPILER arm-buildroot-linux-gnueabihf-c++)
 
+add_compile_options(-O3)
 
 option(ENABLE_INT8 "use int8" ON)
 option(ENABLE_AVX2 "use avx2" OFF)
