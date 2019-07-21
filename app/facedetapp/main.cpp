@@ -25,9 +25,7 @@ int main(int argc, char *argv[])
     view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//隐藏滚动条
     view.resize(240, 320);
     view.show();
-    view.rotate(90);//angle角度
-
-
+    view.rotate(90);
 
     return a.exec();
 }

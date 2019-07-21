@@ -25,18 +25,29 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        Common/Common.c \
+        Common/Common_nh_type.c \
+        Communiction/Communiction.c \
         main.cpp \
         mainwindow.cpp \
         camthread.cpp \
         detectthread.cpp
 
 HEADERS += \
+        Common/Common.h \
+        Common/Common_nh_type.h \
+        Communiction/Communiction.h \
         mainwindow.h \
         camthread.h \
-        detectthread.h
+        detectthread.h \
+        ui_mainwindow.h
 
 FORMS += \
         mainwindow.ui
+
+
+INCLUDEPATH += $${PWD}/Common/
+INCLUDEPATH += $${PWD}/Communiction/
 
 LIBS    += -ljpeg -lcurl -lopencv_core -lopencv_objdetect -lopencv_imgproc -lopencv_imgcodecs -lopencv_videoio -lyuv -lzbar
 LIBS    += ../libfacedetection/build/libfacedetection.a

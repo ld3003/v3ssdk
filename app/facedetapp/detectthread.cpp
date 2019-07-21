@@ -1,6 +1,6 @@
 #include "detectthread.h"
 #include "../libfacedetection/src/facedetectcnn.h"
-#include <zbar.h>
+//#include <zbar.h>
 #include <sys/time.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -8,16 +8,15 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
 #include <curl/curl.h>
 
-
+#include "Communiction.h"
+#include "Common.h"
 
 using namespace std;
 using namespace cv;
-using namespace zbar;
+//using namespace zbar;
 
-static struct timeval gTpstart,gTpend;
 
 void Jpegcompress(const cv::Mat& src, cv::Mat& dest, int quality)
 {
@@ -34,26 +33,6 @@ void Jpegcompress(const cv::Mat& src, cv::Mat& dest, int quality)
     //cv::imshow("src", src);
     //cv::imshow("dst", dest);
 }
-
-
-
-static void time_consuming_start()
-{
-    memset(&gTpstart,0,sizeof(struct timeval));
-    memset(&gTpend,0,sizeof(struct timeval));
-    gettimeofday(&gTpstart,NULL); // 开始时间
-}
-static void time_consuming_print(char *strPuts)
-{
-    float timeuse;
-
-    gettimeofday(&gTpend,NULL); // 结束时间
-    timeuse=1000000*(gTpend.tv_sec-gTpstart.tv_sec)+gTpend.tv_usec-gTpstart.tv_usec;
-    timeuse/=1000000;
-    printf("@ %s -----> Used Time:%f  S\n",strPuts,timeuse);
-}
-
-
 
 DetectThread::DetectThread(CamThread *ct)
 {
@@ -106,6 +85,10 @@ void DetectThread::run()
         }
         time_consuming_print("detect time");
         //Jpegcompress(image1,image2,50);
+
+
+        communiction_pushpic(0,0,0);
+
 
     }
 

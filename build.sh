@@ -1,5 +1,24 @@
 #/bin/bash 
 
+physicalNumber=0
+coreNumber=0
+logicalNumber=0
+HTNumber=0
+
+logicalNumber=$(grep "processor" /proc/cpuinfo|sort -u|wc -l)
+physicalNumber=$(grep "physical id" /proc/cpuinfo|sort -u|wc -l)
+coreNumber=$(grep "cpu cores" /proc/cpuinfo|uniq|awk -F':' '{print $2}'|xargs)
+HTNumber=$((logicalNumber / (physicalNumber * coreNumber)))
+
+echo "****** CPU Information ******"
+echo "Logical CPU Number : ${logicalNumber}"
+echo "Physical CPU Number : ${physicalNumber}"
+echo "CPU Core Number : ${coreNumber}"
+echo "HT Number : ${HTNumber}"
+
+echo "*****************************"
+
+
 LD_LIBRARY_PATH=
 TOP_DIR=`pwd`
 
@@ -150,16 +169,19 @@ function build_demos()
 	make
 
 	cd $APP_DIR/opencv
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 test
+	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} test
 	#./build.sha
 
 	cd $APP_DIR/zbar
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 test
+	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} test
 
 	cd $APP_DIR/curl
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 test
+	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} test
 
 
+	cd $APP_DIR/facedetapp
+  	$TOP_DIR/buildroot/out/host/bin/qmake
+	make -j${logicalNumber}
 
 
 }

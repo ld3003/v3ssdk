@@ -16,12 +16,10 @@ class CamThread : public QThread
     Q_OBJECT
 
 public:
-    CamThread(cv::VideoCapture *cap);
+    CamThread(QObject *obj);
     void run();
     cv::Mat getImage();
     void setDetRect(int x, int y , int w , int h);
-    void abARGB2MatBGR(unsigned int *pbuff, int nRows, int nCols, cv::Mat &imag);
-    cv::Mat TransBufferToMat(unsigned char* pBuffer, int nWidth, int nHeight, int nBandNum, int nBPB = 1);
     QString name;
 
 signals:
