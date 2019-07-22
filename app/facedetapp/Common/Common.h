@@ -7,6 +7,7 @@
 extern "C" {
 #endif
 
+
 void time_consuming_print(char *strPuts);
 void time_consuming_start();
 

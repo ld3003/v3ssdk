@@ -33,10 +33,9 @@ NH_ERRCODE communiction_pushpic(COMMUNICTION *comm, PICTURE *pic, COMMUNICTION_R
     struct curl_httppost *last = NULL;
 
     curl_formadd(&post, &last,CURLFORM_COPYNAME, "file", //此处表示要传的参数名
-            CURLFORM_FILE, "/home/user1/tmp/66-3.jpg",                               //此处表示图片文件的路径
+            CURLFORM_FILE, "/tmp/outImage.jpg",                               //此处表示图片文件的路径
             CURLFORM_CONTENTTYPE, "image/jpeg",
             CURLFORM_END);
-
 
     pCurl = curl_easy_init();
 

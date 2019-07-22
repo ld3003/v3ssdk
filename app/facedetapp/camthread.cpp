@@ -11,6 +11,9 @@
 
 
 
+
+
+
 CamThread::CamThread(QObject *obj)
 {
 
@@ -34,12 +37,13 @@ CamThread::CamThread(QObject *obj)
 void CamThread::run()
 {
     QImage Img;
-    cv::Mat tmppic;
+    cv::Mat tmppic0,tmppic;
 
     for(;;)
     {
-        *mCap >> mImageData1;
         mImglocker.lock();
+        *mCap >> mImageData1;
+        //cv::cvtColor(mImageData1, mImageData1, CV_BGR2RGB);
         mImageData2 = mImageData1;
         mImglocker.unlock();
 
@@ -47,7 +51,8 @@ void CamThread::run()
         cv::resize(mImageData1, mImageData1, cv::Size(mImageData1.cols/RESIZE_VAL, mImageData1.rows/RESIZE_VAL),0,0);
 
 
-        cv::cvtColor(mImageData1, tmppic, CV_BGR2RGB);
+        //cv::cvtColor(mImageData1, tmppic, CV_BGR2RGB);
+        tmppic = mImageData1;
 
         mDetlocker.lock();
         rectangle(tmppic, cv::Rect(mDetRect[0]/RESIZE_VAL, mDetRect[1]/RESIZE_VAL, mDetRect[2]/RESIZE_VAL, mDetRect[3]/RESIZE_VAL), cv::Scalar(0, 255, 0), 2);

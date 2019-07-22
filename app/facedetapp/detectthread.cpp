@@ -43,6 +43,7 @@ DetectThread::DetectThread(CamThread *ct)
 void DetectThread::run()
 {
 
+    char checkflag = 0;
 
 #define DETECT_BUFFER_SIZE 0x20000
     unsigned char * pBuffer = (unsigned char *)malloc(DETECT_BUFFER_SIZE);
@@ -78,18 +79,27 @@ void DetectThread::run()
 
             mCt->setDetRect(x,y,w,h);
 
-
-
-
+            checkflag = 1;
 
         }
+
         time_consuming_print("detect time");
-        //Jpegcompress(image1,image2,50);
 
+        if (checkflag==1)
+        {
+            cv::cvtColor(image1, image2, CV_BGR2RGB);
 
-        communiction_pushpic(0,0,0);
-
-
+            time_consuming_start();
+            vector<int> compression_params;
+            compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+            compression_params.push_back(100);
+            cv::imwrite("/tmp/outImage.jpg", image2, compression_params);
+            time_consuming_print("jpg compression time");
+            time_consuming_start();
+            communiction_pushpic(0,0,0);
+            time_consuming_print("jpg push time");
+            checkflag = 0;
+        }
     }
 
 }

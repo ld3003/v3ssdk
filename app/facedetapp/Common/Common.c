@@ -9,7 +9,6 @@
 
 /*执行耗时计算参数*/
 static struct timeval gTpstart,gTpend;
-
 void time_consuming_start()
 {
     memset(&gTpstart,0,sizeof(struct timeval));
