@@ -22,7 +22,7 @@ public:
     CamThread *mCt;
 
 signals:
-    void detectReady(QImage img);
+    void tipmsg(QString str);
 };
 
 #endif // DETECTTHREAD_H

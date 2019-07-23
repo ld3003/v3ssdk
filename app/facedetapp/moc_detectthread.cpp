@@ -36,7 +36,7 @@ static const uint qt_meta_data_DetectThread[] = {
 };
 
 static const char qt_meta_stringdata_DetectThread[] = {
-    "DetectThread\0\0img\0detectReady(QImage)\0"
+    "DetectThread\0\0str\0tipmsg(QString)\0"
 };
 
 void DetectThread::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -45,7 +45,7 @@ void DetectThread::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         Q_ASSERT(staticMetaObject.cast(_o));
         DetectThread *_t = static_cast<DetectThread *>(_o);
         switch (_id) {
-        case 0: _t->detectReady((*reinterpret_cast< QImage(*)>(_a[1]))); break;
+        case 0: _t->tipmsg((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -91,7 +91,7 @@ int DetectThread::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void DetectThread::detectReady(QImage _t1)
+void DetectThread::tipmsg(QString _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);

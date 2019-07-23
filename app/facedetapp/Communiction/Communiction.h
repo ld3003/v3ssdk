@@ -22,6 +22,7 @@ typedef struct _COMMUNICTION
 
 NH_ERRCODE communiction_init(COMMUNICTION *comm);
 NH_ERRCODE communiction_pushpic(COMMUNICTION *comm, PICTURE *pic, COMMUNICTION_RESULT *result);
+NH_ERRCODE communiction_pushpic2(COMMUNICTION *comm, PICTURE *pic, COMMUNICTION_RESULT *result);
 
 #ifdef __cplusplus
 };

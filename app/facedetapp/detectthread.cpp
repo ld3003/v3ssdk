@@ -56,9 +56,24 @@ void DetectThread::run()
         cv::Mat image1 = mCt->getImage();
         cv::Mat image2;
         cv::Mat image3;
+        cv::Mat image_roi;
+
+
+
 
         if (image1.empty())
             continue;
+
+#if 0
+        {
+            vector<int> compression_params;
+            compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+            compression_params.push_back(100);
+            cv::imwrite("/tmp/outImage.jpg", image1, compression_params);
+            communiction_pushpic2(0,0,0);
+            continue;
+        }
+#endif
 
 #define RESET_VAL 4
 
@@ -79,7 +94,25 @@ void DetectThread::run()
 
             mCt->setDetRect(x,y,w,h);
 
+
+            printf("ROI X %d Y %d W %d H %d\n",x,y,w,h);
+
+
+            if (((x+w) > 640) || ((y+h) > 480) || (x<0) || (y<0))
+                continue;
+
+            Rect rect(x, y, w, h);
+            image_roi = image1(rect);
+
+            if (image_roi.empty())
+            {
+                qDebug() << "emptyemptyemptyemptyemptyemptyemptyemptyemptyemptyemptyemptyemptyempty";
+            }
+
             checkflag = 1;
+
+
+
 
         }
 
@@ -87,19 +120,31 @@ void DetectThread::run()
 
         if (checkflag==1)
         {
-            cv::cvtColor(image1, image2, CV_BGR2RGB);
+            //cv::cvtColor(image1, image2, CV_BGR2RGB);
+
+            COMMUNICTION_RESULT resu;
+            memset(&resu,0x0,sizeof(resu));
 
             time_consuming_start();
             vector<int> compression_params;
             compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
             compression_params.push_back(100);
-            cv::imwrite("/tmp/outImage.jpg", image2, compression_params);
+            cv::imwrite("/tmp/outImage.jpg", image_roi, compression_params);
             time_consuming_print("jpg compression time");
             time_consuming_start();
-            communiction_pushpic(0,0,0);
+            communiction_pushpic(0,0,&resu);
             time_consuming_print("jpg push time");
             checkflag = 0;
+            qDebug() << " emit tip msg";
+            if (resu.tmp == 1)
+                emit tipmsg("PASS");
+            else
+                emit tipmsg("WAITING");
+        }else{
+            emit tipmsg("FACE ERROR");
         }
+
+
     }
 
 }

@@ -11,8 +11,9 @@
 #include "camthread.h"
 #include "detectthread.h"
 
+#include <QLabel>
+
 using namespace std;
-//using namespace cv;
 
 namespace Ui {
 class MainWindow;
@@ -29,12 +30,13 @@ public:
     ~MainWindow();
 public slots:
     void imgFlush(QImage img);
+    void tipmsg(QString);
 
 private:
     Ui::MainWindow *ui;
     CamThread *camThread;
     DetectThread *detThread;
-
+    QLabel *tipLable;
 
 
 };
