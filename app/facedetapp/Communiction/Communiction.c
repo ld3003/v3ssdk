@@ -6,7 +6,8 @@
 #include <curl/curl.h>
 
 #define  REQURL "http://39.98.235.120:18080/rest/face/faceDevice/distinguish"
-static nh_u8 reqbuffer[512];
+
+
 size_t  write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
 
     printf("\n\n\n[%s]\n\n\n\n",ptr);

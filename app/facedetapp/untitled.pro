@@ -28,6 +28,7 @@ SOURCES += \
         Common/Common.c \
         Common/Common_nh_type.c \
         Communiction/Communiction.c \
+        faceregrequest.cpp \
         main.cpp \
         mainwindow.cpp \
         camthread.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
         Common/Common.h \
         Common/Common_nh_type.h \
         Communiction/Communiction.h \
+        faceregrequest.h \
         mainwindow.h \
         camthread.h \
         detectthread.h \

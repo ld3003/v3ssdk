@@ -17,6 +17,7 @@ typedef struct _COMMUNICTION_RESULT
 typedef struct _COMMUNICTION
 {
     nh_u8 tmp;
+    nh_u8 reqbuffer[512];
 
 }COMMUNICTION;
 

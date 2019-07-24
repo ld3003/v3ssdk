@@ -3,11 +3,6 @@
 
 #include <QImage>
 #include <QPixmap>
-#include <QGraphicsScene>
-
-#include <QGraphicsScene>
-#include <QGraphicsView>
-
 #include <QTextFormat>
 
 MainWindow::MainWindow(QWidget *parent) :
