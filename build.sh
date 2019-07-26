@@ -151,36 +151,42 @@ function build_demos()
 	mkdir build
 	cd build
 	cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/arm-buildroot-gnueabihf.toolchain.cmake ..
-	make
+	make -j${logicalNumber}
 
 	cd $APP_DIR/libfacedetection/
 	mkdir build
 	cd build
 	cmake ../
-	make
+	make -j${logicalNumber}
 
 
 
 	cd $APP_DIR/demo-camera/
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j 4 demo-camera
+	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} demo-camera
 	
 	cd $APP_DIR/demo-qt
   	$TOP_DIR/buildroot/out/host/bin/qmake
-	make
+	make -j${logicalNumber}
 
 	cd $APP_DIR/opencv
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} test
-	#./build.sha
-
-	cd $APP_DIR/zbar
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} test
 
 	cd $APP_DIR/curl
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} test
 
-
 	cd $APP_DIR/facedetapp
   	$TOP_DIR/buildroot/out/host/bin/qmake
+	make -j${logicalNumber}
+
+	cd $APP_DIR/qrcode
+  	$TOP_DIR/buildroot/out/host/bin/qmake
+	make -j${logicalNumber}
+
+
+	cd $APP_DIR/facenet/
+	mkdir build
+	cd build
+	cmake ../
 	make -j${logicalNumber}
 
 
