@@ -6,3 +6,6 @@ sudo apt-get install sudo apt-get install lib32z
 sudo apt install libc6-dev-i386
 sudo apt-get install
 sudo apt-get install u-boot-tools
+
+
+git submodule update --remote --merge
