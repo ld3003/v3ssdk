@@ -39,6 +39,7 @@ void Jpegcompress(const cv::Mat& src, cv::Mat& dest, int quality)
 DetectThread::DetectThread(CamThread *ct)
 {
     mCt = ct;
+    tp.setMaxThreadCount(5);
 }
 
 
@@ -80,7 +81,9 @@ void DetectThread::run()
 #define RESET_VAL 4
 
         cv::resize(image1, image3, cv::Size(image1.cols/RESET_VAL, image1.rows/RESET_VAL),0,0);
-        time_consuming_start();
+        struct timeval gTpstart ,gTpend;
+        time_consuming_start(&gTpstart,&gTpend);
+        //time_consuming_print("detect time",&gTpstart,&gTpend);
         pResults = facedetect_cnn(pBuffer, (unsigned char*)(image3.ptr(0)), image3.cols, image3.rows, (int)image3.step);
 
         //print the detection results
@@ -99,19 +102,30 @@ void DetectThread::run()
 
             printf("ROI X %d Y %d W %d H %d\n",x,y,w,h);
             if (((x+w) > image1.cols) || ((y+h) > image1.rows) || (x<0) || (y<0))
-                 continue;
+                continue;
 
-                 Rect rect(x, y, w, h);
-                 image_roi = image1(rect);
+            Rect rect(x, y, w, h);
+            image_roi = image1(rect);
 
-                 QThreadPool::globalInstance()->start(new FaceRegRequest(image_roi));
-                 //QThreadPool::globalInstance()->
+            if (tp.activeThreadCount() < 3 )
+            {
+                FaceRegRequest *FR = new FaceRegRequest(image_roi);
+                if(!FR->autoDelete()) {
+                    qDebug()<<"QRunnable's autoDelete default value is not true";
+                    FR->setAutoDelete(true);
+                }
+                tp.start(FR);
+            }
+
+            //FR->run();
+            //FR->deleteLater();
+
 
 
         }
 
-                 time_consuming_print("detect time");
+        time_consuming_print("detect time",&gTpstart,&gTpend);
 
-        }
+    }
 
-        }
+}

@@ -43,7 +43,6 @@ MainWindow::MainWindow(QWidget *parent) :
     tipMsgtimer = new QTimer(this);
     connect(tipMsgtimer,SIGNAL(timeout()),this,SLOT(tipmsgTimeout()));
 
-
 }
 
 void MainWindow::imgFlush(QImage img)

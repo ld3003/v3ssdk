@@ -42,20 +42,22 @@ void CamThread::run()
     for(;;)
     {
         mImglocker.lock();
-        *mCap >> mImageData1;
-        //cv::cvtColor(mImageData1, mImageData1, CV_BGR2RGB);
-        mImageData2 = mImageData1;
+        *mCap >> mImageData2;
+        mImageData2 = mImageData2(cv::Rect(160 , 120 , 320 , 240));
         mImglocker.unlock();
 
-        #define RESIZE_VAL 2
-        cv::resize(mImageData1, mImageData1, cv::Size(mImageData1.cols/RESIZE_VAL, mImageData1.rows/RESIZE_VAL),0,0);
+
+        mImageData1 = mImageData2;
+
+#define RESIZE_VAL 2
+        //cv::resize(mImageData1, mImageData1, cv::Size(mImageData1.cols/RESIZE_VAL, mImageData1.rows/RESIZE_VAL),0,0);
 
 
         cv::cvtColor(mImageData1, tmppic, CV_BGR2RGB);
         //tmppic = mImageData1;
 
         mDetlocker.lock();
-        rectangle(tmppic, cv::Rect(mDetRect[0]/RESIZE_VAL, mDetRect[1]/RESIZE_VAL, mDetRect[2]/RESIZE_VAL, mDetRect[3]/RESIZE_VAL), cv::Scalar(0, 255, 0), 2);
+        //rectangle(tmppic, cv::Rect(mDetRect[0]/RESIZE_VAL, mDetRect[1]/RESIZE_VAL, mDetRect[2]/RESIZE_VAL, mDetRect[3]/RESIZE_VAL), cv::Scalar(0, 255, 0), 2);
         mDetlocker.unlock();
 
         Img = QImage((const uchar*)(tmppic.data), tmppic.cols, tmppic.rows, tmppic.cols * tmppic.channels(), QImage::Format_RGB888);

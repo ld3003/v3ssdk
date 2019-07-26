@@ -58,6 +58,8 @@ string GetQR(Mat img)
 int main(int c , char **argv)
 {
 	Mat img;
+
+
 	string result;
 	for(;;)
 	{

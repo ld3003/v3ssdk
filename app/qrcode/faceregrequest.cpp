@@ -76,7 +76,7 @@ void FaceRegRequest::run()
     PICTURE pic;
     vector<int> compression_params;
     compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
-    compression_params.push_back(50);
+    compression_params.push_back(100);
     cv::imwrite(filename, mFace, compression_params);
     pic.path = (nh_u8*)filename;
     communiction_pushpic(&mCOMMUNICTION,&pic,&resu);

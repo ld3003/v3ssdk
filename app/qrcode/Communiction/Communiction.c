@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <curl/curl.h>
 
-#define  REQURL "http://39.98.235.120:18080/rest/face/faceDevice/distinguish"
+#define  REQURL "http://demo.zxhtong.com/camera_upload.html"
 
 static unsigned char reqbuffer[512];
 
