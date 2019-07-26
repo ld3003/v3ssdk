@@ -109,8 +109,8 @@ function build_buildroot()
 	mkdir -p $BUILDROOT_OUT_DIR
 
 
-	cp $BUILDROOT_OUT_DIR/.config configs/mangopi_defconfig
-	cp configs/mangopi_defconfig $BUILDROOT_OUT_DIR/.config
+	#cp $BUILDROOT_OUT_DIR/.config configs/mangopi_defconfig
+	#cp configs/mangopi_defconfig $BUILDROOT_OUT_DIR/.config
 
 	make O=$BUILDROOT_OUT_DIR oldconfig
 	
@@ -144,7 +144,9 @@ function pack()
 	
 }
 
-function build_demos()
+
+
+function build_library()
 {
 	
 	cd $APP_DIR/ncnn/
@@ -159,7 +161,10 @@ function build_demos()
 	cmake ../
 	make -j${logicalNumber}
 
+}
 
+function build_demos()
+{
 
 	cd $APP_DIR/demo-camera/
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} demo-camera
@@ -181,7 +186,6 @@ function build_demos()
 	cd $APP_DIR/qrcode
   	$TOP_DIR/buildroot/out/host/bin/qmake
 	make -j${logicalNumber}
-
 
 	cd $APP_DIR/facenet/
 	mkdir build
@@ -210,6 +214,7 @@ if [ $# -eq 0 ] ; then
 	build_buildroot
 	#build_uboot
 	build_kernel
+	build_library
 	build_demos
 	pack
 else
@@ -228,6 +233,9 @@ else
 		;;
 	buildroot)
 		build_buildroot
+		;;
+	lib)
+		build_library
 		;;
 	app)
 		build_demos
