@@ -6,9 +6,9 @@ SET ( CMAKE_C_COMPILER "arm-linux-gnueabi-gcc" )
 SET ( CMAKE_CXX_COMPILER "arm-linux-gnueabi-g++" )
 
 # set searching rules for cross-compiler
-SET ( CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER )
-SET ( CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY )
-SET ( CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY )
+#SET ( CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER )
+#SET ( CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY )
+#SET ( CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY )
 
 # set ${CMAKE_C_FLAGS} and ${CMAKE_CXX_FLAGS}flag for cross-compiled process
 SET ( CMAKE_CXX_FLAGS "-std=c++11 -march=armv7-a -mfloat-abi=softfp -mfpu=neon-vfpv4 -fopenmp ${CMAKE_CXX_FLAGS}" )
