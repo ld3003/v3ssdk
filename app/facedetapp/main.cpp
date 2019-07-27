@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-
+#if 0
     QGraphicsScene scene;
     QGraphicsView view;
     scene.addWidget(&w);//添加到场景
@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
     view.resize(240, 320);
     view.show();
     view.rotate(90);
+#endif
 
     QApplication::setOverrideCursor(Qt::BlankCursor);
 

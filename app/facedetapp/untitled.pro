@@ -37,6 +37,7 @@ SOURCES += \
         mainwindow.cpp \
         camthread.cpp \
         detectthread.cpp \
+    mobilefacenet.cpp \
     mtcnn.cpp
 
 HEADERS += \
@@ -47,6 +48,7 @@ HEADERS += \
         mainwindow.h \
         camthread.h \
         detectthread.h \
+    mobilefacenet.h \
         ui_mainwindow.h \
     mtcnn.h
 

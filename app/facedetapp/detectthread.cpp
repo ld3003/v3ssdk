@@ -20,7 +20,7 @@ using namespace cv;
 
 #define RESET_VAL 4
 #define DETECT_BUFFER_SIZE 0x20000
-#define USE_LIBDET
+#define USE_MTCNN
 
 
 void Jpegcompress(const cv::Mat& src, cv::Mat& dest, int quality)
@@ -55,6 +55,7 @@ void DetectThread::run()
 
 
 
+
     for(;;)
     {
         int i;
@@ -74,8 +75,11 @@ void DetectThread::run()
 
         cv::resize(image1, image3, cv::Size(image1.cols/RESET_VAL, image1.rows/RESET_VAL),0,0);
         ncnn::Mat ncnn_img = ncnn::Mat::from_pixels(image3.data, ncnn::Mat::PIXEL_BGR2RGB, image3.cols, image3.rows);
-        mtcnn->detectMaxFace(ncnn_img, finalBbox);
 
+        struct timeval gTpstart ,gTpend;
+        time_consuming_start(&gTpstart,&gTpend);
+        mtcnn->detectMaxFace(ncnn_img, finalBbox);
+        time_consuming_print("detect time",&gTpstart,&gTpend);
         if (finalBbox.size() == 1)
         {
 
