@@ -17,7 +17,10 @@
 
 using namespace std;
 using namespace cv;
-//using namespace zbar;
+
+#define RESET_VAL 4
+#define DETECT_BUFFER_SIZE 0x20000
+#define USE_LIBDET
 
 
 void Jpegcompress(const cv::Mat& src, cv::Mat& dest, int quality)
@@ -38,6 +41,7 @@ void Jpegcompress(const cv::Mat& src, cv::Mat& dest, int quality)
 
 DetectThread::DetectThread(CamThread *ct)
 {
+    mtcnn = new MTCNN("./models");
     mCt = ct;
     tp.setMaxThreadCount(5);
 }
@@ -48,37 +52,50 @@ void DetectThread::run()
 
     char checkflag = 0;
 
-#define DETECT_BUFFER_SIZE 0x20000
-    unsigned char * pBuffer = (unsigned char *)malloc(DETECT_BUFFER_SIZE);
+
+
 
     for(;;)
     {
         int i;
         int *pResults;
 
+        std::vector<Bbox> finalBbox;
+
         cv::Mat image1 = mCt->getImage();
         cv::Mat image2;
         cv::Mat image3;
         cv::Mat image_roi;
 
-
-
-
         if (image1.empty())
             continue;
 
-#if 0
+#ifdef USE_MTCNN
+
+        cv::resize(image1, image3, cv::Size(image1.cols/RESET_VAL, image1.rows/RESET_VAL),0,0);
+        ncnn::Mat ncnn_img = ncnn::Mat::from_pixels(image3.data, ncnn::Mat::PIXEL_BGR2RGB, image3.cols, image3.rows);
+        mtcnn->detectMaxFace(ncnn_img, finalBbox);
+
+        if (finalBbox.size() == 1)
         {
-            vector<int> compression_params;
-            compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
-            compression_params.push_back(100);
-            cv::imwrite("/tmp/outImage.jpg", image1, compression_params);
-            communiction_pushpic2(0,0,0);
-            continue;
+
+            int x = finalBbox[0].x1;
+            int y = finalBbox[0].y1;
+            int w = finalBbox[0].x2 - finalBbox[0].x1 + 1;
+            int h = finalBbox[0].y2 - finalBbox[0].y1;
+
+            mCt->setDetRect(x*RESET_VAL,y*RESET_VAL,w*RESET_VAL,h*RESET_VAL);
+
         }
+
+        continue;
 #endif
 
-#define RESET_VAL 4
+
+#ifdef USE_LIBDET
+
+
+        unsigned char * pBuffer = (unsigned char *)malloc(DETECT_BUFFER_SIZE);
 
         cv::resize(image1, image3, cv::Size(image1.cols/RESET_VAL, image1.rows/RESET_VAL),0,0);
         struct timeval gTpstart ,gTpend;
@@ -125,7 +142,7 @@ void DetectThread::run()
         }
 
         time_consuming_print("detect time",&gTpstart,&gTpend);
-
+#endif
     }
 
 }

@@ -11,6 +11,8 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #include <QThreadPool>
 
+#include "mtcnn.h"
+
 
 
 class DetectThread : public QThread
@@ -22,6 +24,7 @@ public:
     QString name; //添加一个 name 对象
     CamThread *mCt;
     QThreadPool tp;
+    MTCNN *mtcnn;
 
 signals:
     void tipmsg(QString str);

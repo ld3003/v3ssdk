@@ -27,24 +27,12 @@ bool cmpArea(Bbox lsh, Bbox rsh) {
 //MTCNN::MTCNN(){}
 MTCNN::MTCNN(const string &model_path) {
 
-    std::vector<std::string> param_files = {
-        model_path+"/det1.param",
-        model_path+"/det2.param",
-        model_path+"/det3.param"
-    };
-
-    std::vector<std::string> bin_files = {
-        model_path+"/det1.bin",
-        model_path+"/det2.bin",
-        model_path+"/det3.bin"
-    };
-
-    Pnet.load_param(param_files[0].data());
-    Pnet.load_model(bin_files[0].data());
-    Rnet.load_param(param_files[1].data());
-    Rnet.load_model(bin_files[1].data());
-    Onet.load_param(param_files[2].data());
-    Onet.load_model(bin_files[2].data());
+    Pnet.load_param("./det1.param");
+    Pnet.load_model("./det1.bin");
+    Rnet.load_param("./det2.param");
+    Rnet.load_model("./det2.bin");
+    Onet.load_param("./det3.param");
+    Onet.load_model("./det3.bin");
 }
 
 MTCNN::MTCNN(const std::vector<std::string> param_files, const std::vector<std::string> bin_files){
@@ -408,13 +396,13 @@ void MTCNN::detectMaxFace(ncnn::Mat& img_, std::vector<Bbox>& finalBbox) {
         m = m*factor;
     }
     sort(scales_.begin(), scales_.end());
-    printf("scales_.size()=%d\n", scales_.size());
+    //printf("scales_.size()=%d\n", scales_.size());
     
     //Change the sampling process.
     for (size_t i = 0; i < (scales_.size()); i++)
     {
         //first stage
-	printf("@@@@@@@@@@@@@@@@@@@@@@@ i %d\n",i);
+        //printf("@@@@@@@@@@@@@@@@@@@@@@@ i %d\n",i);
 	
         PNet(scales_[i]);
 	
@@ -427,7 +415,7 @@ void MTCNN::detectMaxFace(ncnn::Mat& img_, std::vector<Bbox>& finalBbox) {
         }
         firstPreviousBbox_.insert(firstPreviousBbox_.end(), firstBbox_.begin(), firstBbox_.end());
         refine(firstBbox_, img_h, img_w, true);
-        printf("firstBbox_.size()=%d\n", firstBbox_.size());
+        //printf("firstBbox_.size()=%d\n", firstBbox_.size());
 
         //second stage
         RNet();
@@ -450,11 +438,11 @@ void MTCNN::detectMaxFace(ncnn::Mat& img_, std::vector<Bbox>& finalBbox) {
         }
 	
         refine(secondBbox_, img_h, img_w, true);
-        printf("secondBbox_.size()=%d\n", secondBbox_.size());
+        //printf("secondBbox_.size()=%d\n", secondBbox_.size());
 
         //third stage
         ONet();
-        printf("thirdBbox_.size()=%d\n", thirdBbox_.size());
+        //printf("thirdBbox_.size()=%d\n", thirdBbox_.size());
         if (thirdBbox_.size() < 1) {
             firstBbox_.clear();
             secondBbox_.clear();
@@ -471,8 +459,8 @@ void MTCNN::detectMaxFace(ncnn::Mat& img_, std::vector<Bbox>& finalBbox) {
         }
     }
 
-    printf("firstPreviousBbox_.size()=%d\n", firstPreviousBbox_.size());
-    printf("secondPreviousBbox_.size()=%d\n", secondPreviousBbox_.size());
+    //printf("firstPreviousBbox_.size()=%d\n", firstPreviousBbox_.size());
+    //printf("secondPreviousBbox_.size()=%d\n", secondPreviousBbox_.size());
 }
 
 

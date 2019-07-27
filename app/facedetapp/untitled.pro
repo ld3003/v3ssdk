@@ -23,6 +23,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
+CONFIG += fopenmp
+
+QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -fopenmp
 
 SOURCES += \
         Common/Common.c \
@@ -32,7 +36,8 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         camthread.cpp \
-        detectthread.cpp
+        detectthread.cpp \
+    mtcnn.cpp
 
 HEADERS += \
         Common/Common.h \
@@ -42,7 +47,8 @@ HEADERS += \
         mainwindow.h \
         camthread.h \
         detectthread.h \
-        ui_mainwindow.h
+        ui_mainwindow.h \
+    mtcnn.h
 
 FORMS += \
         mainwindow.ui
@@ -53,6 +59,12 @@ INCLUDEPATH += $${PWD}/Communiction/
 
 LIBS    += -ljpeg -lcurl -lopencv_core -lopencv_objdetect -lopencv_imgproc -lopencv_imgcodecs -lopencv_videoio -lyuv -lzbar
 LIBS    += ../libfacedetection/build/libfacedetection.a
+LIBS    += ../ncnn/build/src/libncnn.a
+LIBS    += -fopenmp
+
+INCLUDEPATH += ../ncnn/src/
+INCLUDEPATH += ../ncnn/build/src/
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

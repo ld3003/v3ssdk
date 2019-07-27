@@ -2,13 +2,14 @@
 #include "mobilefacenet.h"
 #include <opencv2/opencv.hpp>
 
-#define RUN_TEST printf("RUN_TEST %s %d \n",__FILE__,__LINE__);
+#define RUN_TEST printf("RUN_TEST %s %d \n", __FILE__, __LINE__);
 
 using namespace cv;
 
 #define MAXFACEOPEN 1 //设置是否开关最大人脸调试，1为开，其它为关
 
-void test_picture(char *samplejpg){
+void test_picture(char *samplejpg)
+{
     const char *model_path = "./models";
     MTCNN mtcnn(model_path);
 
@@ -19,24 +20,20 @@ void test_picture(char *samplejpg){
     ncnn::Mat ncnn_img = ncnn::Mat::from_pixels(image.data, ncnn::Mat::PIXEL_BGR2RGB, image.cols, image.rows);
     std::vector<Bbox> finalBbox;
 
-    RUN_TEST;
-    RUN_TEST;
+#if (MAXFACEOPEN == 1)
 
-#if(MAXFACEOPEN==1)
-    RUN_TEST;
     mtcnn.detectMaxFace(ncnn_img, finalBbox);
 #else
-    RUN_TEST;
+
     mtcnn.detect(ncnn_img, finalBbox);
 #endif
-
-    RUN_TEST;
 
     const int num_box = finalBbox.size();
     std::vector<cv::Rect> bbox;
     bbox.resize(num_box);
 
-    if (num_box == 1) {
+    if (num_box == 1)
+    {
         cv::Mat ROI(image, Rect(finalBbox[0].x1, finalBbox[0].y1, finalBbox[0].x2 - finalBbox[0].x1 + 1, finalBbox[0].y2 - finalBbox[0].y1 + 1));
 
         cv::Mat croppedImage;
@@ -44,8 +41,10 @@ void test_picture(char *samplejpg){
         // Copy the data into new matrix
         ROI.copyTo(croppedImage);
 
-        imwrite("sample.jpg",croppedImage);
-    } else {
+        imwrite("sample.jpg", croppedImage);
+    }
+    else
+    {
         std::cout << "no face detected or too much faces" << std::endl;
     }
 #if 0
@@ -71,19 +70,23 @@ void test_picture(char *samplejpg){
 #endif
 }
 
-void test_video(int argc, char** argv) {
+void test_video(int argc, char **argv)
+{
     const char *model_path = "../models";
     MTCNN mtcnn(model_path);
     mtcnn.SetMinFace(40);
-    cv::VideoCapture mVideoCapture(argc>1?argv[1]:0);
-    if (!mVideoCapture.isOpened()) {
+    cv::VideoCapture mVideoCapture(argc > 1 ? argv[1] : 0);
+    if (!mVideoCapture.isOpened())
+    {
         return;
     }
     cv::Mat frame;
     mVideoCapture >> frame;
-    while (!frame.empty()) {
+    while (!frame.empty())
+    {
         mVideoCapture >> frame;
-        if (frame.empty()) {
+        if (frame.empty())
+        {
             break;
         }
 
@@ -91,7 +94,7 @@ void test_video(int argc, char** argv) {
 
         ncnn::Mat ncnn_img = ncnn::Mat::from_pixels(frame.data, ncnn::Mat::PIXEL_BGR2RGB, frame.cols, frame.rows);
         std::vector<Bbox> finalBbox;
-#if(MAXFACEOPEN==1)
+#if (MAXFACEOPEN == 1)
         mtcnn.detectMaxFace(ncnn_img, finalBbox);
 #else
         mtcnn.detect(ncnn_img, finalBbox);
@@ -99,15 +102,17 @@ void test_video(int argc, char** argv) {
         const int num_box = finalBbox.size();
         std::vector<cv::Rect> bbox;
         bbox.resize(num_box);
-        for(int i = 0; i < num_box; i++){
+        for (int i = 0; i < num_box; i++)
+        {
             bbox[i] = cv::Rect(finalBbox[i].x1, finalBbox[i].y1, finalBbox[i].x2 - finalBbox[i].x1 + 1, finalBbox[i].y2 - finalBbox[i].y1 + 1);
 
-            for (int j = 0; j<5; j = j + 1)
+            for (int j = 0; j < 5; j = j + 1)
             {
                 cv::circle(frame, cvPoint(finalBbox[i].ppoint[j], finalBbox[i].ppoint[j + 5]), 2, CV_RGB(0, 255, 0), CV_FILLED);
             }
         }
-        for (vector<cv::Rect>::iterator it = bbox.begin(); it != bbox.end(); it++) {
+        for (vector<cv::Rect>::iterator it = bbox.begin(); it != bbox.end(); it++)
+        {
             rectangle(frame, (*it), Scalar(0, 0, 255), 2, 8, 0);
         }
         //imshow("face_detection", frame);
@@ -117,13 +122,14 @@ void test_video(int argc, char** argv) {
 
         //int q = cv::waitKey(10);
         //if (q == 27) {
-            break;
+        break;
         //}
     }
-    return ;
+    return;
 }
 
-void test_facenet(int argc, char** argv) {
+void test_facenet(int argc, char **argv)
+{
     const char *model_path = "./models";
     Recognize recognize(model_path);
 
@@ -140,7 +146,7 @@ void test_facenet(int argc, char** argv) {
 
     MTCNN mtcnn(model_path);
     mtcnn.SetMinFace(40);
-    
+
 #if 0
     cv::VideoCapture mVideoCapture(argc>2?argv[2]:0);
     if (!mVideoCapture.isOpened()) {
@@ -150,13 +156,14 @@ void test_facenet(int argc, char** argv) {
     cv::Mat frame;
     //mVideoCapture >> frame;
     frame = sampleimg;
-    while (!frame.empty()) {
+    while (!frame.empty())
+    {
 
         clock_t start_time = clock();
 
         ncnn::Mat ncnn_img = ncnn::Mat::from_pixels(frame.data, ncnn::Mat::PIXEL_BGR2RGB, frame.cols, frame.rows);
         std::vector<Bbox> finalBbox;
-#if(MAXFACEOPEN==1)
+#if (MAXFACEOPEN == 1)
         mtcnn.detectMaxFace(ncnn_img, finalBbox);
 #else
         mtcnn.detect(ncnn_img, finalBbox);
@@ -174,7 +181,8 @@ void test_facenet(int argc, char** argv) {
         //     }
         // }
 
-        for(int i = 0; i < num_box; i++){
+        for (int i = 0; i < num_box; i++)
+        {
             cv::Rect r = Rect(finalBbox[0].x1, finalBbox[0].y1, finalBbox[0].x2 - finalBbox[0].x1 + 1, finalBbox[0].y2 - finalBbox[0].y1 + 1);
             cv::Mat ROI(frame, r);
 
@@ -188,17 +196,19 @@ void test_facenet(int argc, char** argv) {
 
             double similar = calculSimilar(samplefea, croppedfea);
 
-             std::cout << "similarity is : " << similar << std::endl;
+            std::cout << "similarity is : " << similar << std::endl;
 
-            if (similar > 0.65) {
+            if (similar > 0.65)
+            {
                 rectangle(frame, r, Scalar(0, 0, 255), 2, 8, 0);
-            } else {
-                for (int j = 0; j<5; j = j + 1)
+            }
+            else
+            {
+                for (int j = 0; j < 5; j = j + 1)
                 {
                     cv::circle(frame, cvPoint(finalBbox[i].ppoint[j], finalBbox[i].ppoint[j + 5]), 2, CV_RGB(0, 255, 0), CV_FILLED);
                 }
             }
-
         }
 
         //imshow("face_detection", frame);
@@ -207,17 +217,21 @@ void test_facenet(int argc, char** argv) {
         std::cout << "time" << total_time * 1000 << "ms" << std::endl;
 
         //if (cv::waitKey(10) == 27) {
-            break;
+        break;
         //}
     }
-    return ;
+    return;
 }
 
-int main(int argc, char** argv) {
-    if ((argc > 1) && !strcmp(argv[1], "-sample")) {
+int xmain(int argc, char **argv)
+{
+    if ((argc > 1) && !strcmp(argv[1], "-sample"))
+    {
         test_picture(argv[2]);
         return 0;
-    } else if ((argc > 1) && !strcmp(argv[1], "-facenet")) {
+    }
+    else if ((argc > 1) && !strcmp(argv[1], "-facenet"))
+    {
         test_facenet(argc, argv);
         return 0;
     }
@@ -226,14 +240,71 @@ int main(int argc, char** argv) {
     //test_picture();
     return 0;
 }
-/*
+
+cv::Mat mtcnn(char *samplejpg)
+{
+    cv::Mat croppedImage;
+    const char *model_path = "./models";
+
+    MTCNN *mtcnn = new MTCNN(model_path);
+
+    clock_t start_time = clock();
+
+    cv::Mat image;
+    image = cv::imread(samplejpg);
+
+    if (image.empty())
+    {
+        std::cout << "image empty" << std::endl;
+        return croppedImage;
+    }
+
+    ncnn::Mat ncnn_img = ncnn::Mat::from_pixels(image.data, ncnn::Mat::PIXEL_BGR2RGB, image.cols, image.rows);
+
+    std::vector<Bbox> finalBbox;
+
+#if (MAXFACEOPEN == 1)
+    clock_t start_time_mtcnn = clock();
+    clock_t finish_time_mtcnn = clock();
+    mtcnn->detectMaxFace(ncnn_img, finalBbox);
+    double total_time_mtcnn = (double)(finish_time_mtcnn - start_time_mtcnn) / CLOCKS_PER_SEC;
+    std::cout << "time" << total_time_mtcnn * 1000 << "ms" << std::endl;
+#else
+    mtcnn->detect(ncnn_img, finalBbox);
+#endif
+    const int num_box = finalBbox.size();
+    std::vector<cv::Rect> bbox;
+    bbox.resize(num_box);
+
+    if (num_box == 1)
+    {
+        cv::Mat ROI(image, Rect(finalBbox[0].x1, finalBbox[0].y1, finalBbox[0].x2 - finalBbox[0].x1 + 1, finalBbox[0].y2 - finalBbox[0].y1 + 1));
+
+        // Copy the data into new matrix
+        ROI.copyTo(croppedImage);
+
+        imwrite("sample.jpg", croppedImage);
+        std::cout << "face detected" << std::endl;
+    }
+    else
+    {
+        std::cout << "no face detected or too much faces" << std::endl;
+    }
+
+    delete mtcnn;
+
+    return croppedImage;
+}
+
 int main()
 {
-    char *model_path = "../models";
+    char *model_path = "./models";
+
+    cv::Mat img1 = mtcnn("./zp/ld3.jpg");
+    cv::Mat img2 = mtcnn("./zp/ld2.jpg");
+
     Recognize recognize(model_path);
 
-    cv::Mat img1 = cv::imread("../pic/Aaron_Tippin_0001.jpg", CV_LOAD_IMAGE_COLOR);
-    cv::Mat img2 = cv::imread("../pic/Aaron_Peirsol_0004.jpg", CV_LOAD_IMAGE_COLOR);
     std::vector<float> feature1;
     std::vector<float> feature2;
 
@@ -246,10 +317,6 @@ int main()
 
     std::cout << "time" << total_time * 1000 << "ms" << std::endl;
     std::cout << "similarity is : " << similar << std::endl;
-    cv::imshow("left", img1);
-    cv::imshow("right", img2);
-    cv::waitKey(0);
 
     return 0;
 }
-*/
