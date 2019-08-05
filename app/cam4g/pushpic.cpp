@@ -11,9 +11,10 @@ size_t write_data(void *buff, size_t size, size_t nmemb, FILE *fp){
 }
 
 
-#define  REQURL "http://39.98.235.120:18080/rest/face/faceDevice/distinguish"
+#define  REQURL "http://demo.zxhtong.com/camera_upload.html"
 
-int test(int argc, char* argv[]){
+int pushpic()
+{
 	char *url= REQURL;
 	CURL *pCurl = NULL;
 	CURLcode res;
@@ -28,7 +29,7 @@ int test(int argc, char* argv[]){
 			CURLFORM_END);
 
 	curl_formadd(&post, &last,CURLFORM_COPYNAME, "file", //此处表示要传的参数名
-			CURLFORM_FILE, "1.jpg",                               //此处表示图片文件的路径
+			CURLFORM_FILE, "/tmp/tmp.jpg",                               //此处表示图片文件的路径
 			CURLFORM_CONTENTTYPE, "image/jpeg",
 			CURLFORM_END);
 

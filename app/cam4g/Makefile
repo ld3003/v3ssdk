@@ -42,7 +42,7 @@ INCDIRS = ./
 
 CFLAGS += -I$(INCDIRS)
 
-LDFLAGS += -lpthread -lzbar -lopencv_core -lopencv_objdetect -lopencv_imgproc -lopencv_imgcodecs -lcurl -lm 
+LDFLAGS += -lpthread -lzbar -lopencv_core -lopencv_videoio -lopencv_imgcodecs -lopencv_objdetect -lopencv_imgproc -lopencv_imgcodecs -lcurl -lm 
 
 # source file(s), including c file(s) cpp file(s)
 # you can also use $(wildcard *.c), etc.

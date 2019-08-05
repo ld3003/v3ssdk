@@ -47,6 +47,7 @@
 //#include "debug-msg.h"
 #include "serialport.h"
 #include "error-log.h"
+#include "saveppic.h"
 
 pthread_t write_tid; /**< write thread */
 pthread_t read_tid;  /**< read thread */
@@ -110,6 +111,20 @@ void *read_port_thread(void *argc)
             tmp[num+1] = '\0';
             printf("[%s]\n", tmp);
 
+            if (strstr(tmp,"AT+GETPIC"))
+            {
+                if (getpic())
+                {
+                    snprintf(tmp,sizeof(tmp),"OK");
+                    write(fd, tmp, strlen(tmp));
+                }else{
+
+                    snprintf(tmp,sizeof(tmp),"ERROR NOPIC");
+                    write(fd, tmp, strlen(tmp));
+
+                }
+            }
+
             
         }
         //sleep(1);
@@ -163,6 +178,8 @@ int main(int argc, char* argv[])
     int fd;
     int ret;
 	char dev_name[32] = {0};
+
+    opencam();
     
     strcpy(dev_name, "/dev/ttyS2");
     if (argc == 2)
