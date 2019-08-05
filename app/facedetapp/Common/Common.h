@@ -36,6 +36,8 @@ inline float time_consuming_print(char *strPuts , struct timeval *gTpstart , str
 
 }
 
+int get_mac(char * mac, int len_limit , long long *devid , char *ethname);
+
 #ifdef __cplusplus
 }
 #endif

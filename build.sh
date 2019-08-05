@@ -179,6 +179,13 @@ function build_demos()
 	cd $APP_DIR/curl
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} test
 
+
+	cd $APP_DIR/cam4g
+	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} test
+
+	cd $APP_DIR/serialport_linux/src
+	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} 
+
 	cd $APP_DIR/facedetapp
   	$TOP_DIR/buildroot/out/host/bin/qmake
 	make -j${logicalNumber}
