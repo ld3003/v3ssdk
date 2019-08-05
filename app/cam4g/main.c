@@ -1,134 +1,207 @@
-#if 0
-#include <stdio.h>
-#include <curl/curl.h>
-//linker options: -lcurl -lcurldll
+/**
+ *                      Copyleft (C) 2010  Late Lee
+ *        This program is tested on LINUX PLATFORM, WITH GCC 4.x.
+ *        The program is distributed in the hope that it will be
+ *        useful, but WITHOUT ANY WARRANTY. Please feel free to 
+ *        use the program, and I feel free to ignore the related
+ *        issues. Any questions or suggestions, or bugs, please 
+ *        contact me at
+ *        <$ echo -n "aHR0cDovL3d3dy5sYXRlbGVlLm9yZwo=" | base64 -d>
+ *        or e-mail to 
+ *        <$ echo -n "bGF0ZWxlZUAxNjMuY29tCg==" | base64 -d>
+ *        if you want to do this.
+ *
+ * @file   main.c
+ * @author Late Lee
+ * @date   Mon Jan 10 2011
+ * 
+ * @brief  A simple test of serial port writing data to the port.
+ * @test   To compile the program, type <tt> make </tt>,
+ *         then it will generate the executable binary @p a.out.
+ *         To run it, type <tt> ./a.out</tt>.Make sure you have the permission
+ *         to open the serial port.@n
+ *         You can start a ternimal and type @p minicom(also make sure you can
+ *         open the device). When everything is OK, you can see the data in 
+ *         minicom using the same port if you connect pin 2 & pin 3 of the port
+ *         (the male connector, see the picture below)(but I don't know the
+ *         reason, isn't it blocked?).@n
+ *         If you want to stop the program, just use 'Ctrl+c' or 'q'. @n
+ *         In default, the program open the device '/dev/ttyUSB0'.@n
+ *         Here are snapshots of the program:
+ *         @image html serial-write.jpg "Writing to the port..."
+ *         @image html serial-read-minicom.jpg "Reading the data in minicom..."
+ *         @image html send_revc_self.jpg "One thread send, one thread read."
+ *         @n And here comes the serial port connector:
+ *         @image html com-male.jpg "A 9-pin male D-Sub connector(*)"
+ *         @image html com-female.jpg "A 9-pin female D-Sub connector"
+ *         (*)We use this connector in the test.
+ * 
+ */
 
-size_t write_function(void *buff, size_t size, size_t nmemb, FILE *fp){
-    //回调函数，下载的数据通过这里写入本地文件
-    fwrite(buff, size, nmemb, fp);
-    return size*nmemb;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <signal.h>
+//#include "debug-msg.h"
+#include "serialport.h"
+#include "error-log.h"
+
+pthread_t write_tid; /**< write thread */
+pthread_t read_tid;  /**< read thread */
+pthread_t exit_tid;  /**< exit thread */
+
+/** The data we write to the port. */
+//char *buf = "Are you going to die?\r\n";
+char *buf = "Are you going to die? To be or not to be, that is the question.\r\n";
+/** data we receive */
+char tmp[512];
+
+/** 
+ * write_port_thread - A thread that writes data to the port
+ * 
+ * @param argc : Here means the port(specified by the fd).
+ * 
+ * @note
+ * This is only a test, not the @e real one.
+ */
+void *write_port_thread(void *argc)
+{
+    int ret;
+    int fd;
+    static int cnt = 1;
+    char send_buf[512] = {0};
+
+    fd = (int)argc;
+
+    while (1)
+    {
+        sprintf(send_buf, "%d %s", cnt, buf);
+        debug_msg("writing time %d... ", cnt++);
+
+        ret = write(fd, send_buf, strlen(send_buf));
+
+        if (ret < 0)
+            pthread_exit(NULL);
+        debug_msg("write num---: %d\n", ret);
+        sleep(2);
+    }
+    pthread_exit(NULL);
 }
 
-int main(int argc, char* argv[]){
-    CURL *curl = NULL;
-    CURLcode code = 0;
-    char url[] = "http://www.lolhelper.cn/rank/rank.php";
-    char formdata[] = "daqu=%E7%94%B5%E4%BF%A1%E4%B8%80&nickname=%E4%BC%A0%E5%A5%87%E8%8B%B1%E9%9B%84";
-    char filename[] = "c:\\post.html";
-    FILE *fp = fopen(filename, "w");
+/** 
+ * read_port_thread - Thread that reads data from the port
+ * 
+ * @param argc : Here means the port(specified by the fd).
+ * 
+ */
+void *read_port_thread(void *argc)
+{
+    int num;
+    int fd;
+    
+    fd = (int)argc;
+    while (1)
+    {
+        while ((num = read(fd, tmp, 512)) > 0)
+        {
+            debug_msg("read num: %d\n", num);
+            tmp[num+1] = '\0';
+            printf("[%s]\n", tmp);
 
-
-    curl = curl_easy_init();
-    if(curl){
-        //设置POST协议、URL和FORM_DATA
-        curl_easy_setopt(curl, CURLOPT_POST, 1);
-        curl_easy_setopt(curl, CURLOPT_URL, url);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, formdata);
-        //设置数据回调
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-        code = curl_easy_perform(curl);
-
-        if(code == CURLE_OK){
-            ;;
+            
         }
+        //sleep(1);
+        printf("READ:\n");
+        if (num < 0)
+            pthread_exit(NULL);
+	}
+    pthread_exit(NULL);
+}
 
-        curl_easy_cleanup(curl);
+/** 
+ * sig_handle - Handle the INT signal.
+ * 
+ * @param sig_num : The signal.
+ * @note
+ * This function is not used.
+ */
+void sig_handle(int sig_num)
+{
+    debug_msg("catch signal %d\n", sig_num);
+    exit(0);
+}
+
+/** 
+ * exit_thread - Thread that exit the program when 'q' pressed
+ * 
+ * @param argc : Here means the port(specified by the fd).
+ * 
+ */
+void* exit_thread(void* argc)
+{
+    while (1)
+    {
+        int c = getchar();
+        if ('q' == c)
+        {
+            printf("You exit, not myself.\n");
+            exit(0);
+        }
+        sleep(1);
+    }
+    pthread_exit(NULL);
+}
+
+/** 
+ * main - main function
+ * 
+ */
+int main(int argc, char* argv[])
+{
+    int fd;
+    int ret;
+	char dev_name[32] = {0};
+    
+    strcpy(dev_name, "/dev/ttyS2");
+    if (argc == 2)
+    {
+        sprintf(dev_name,"%s",argv[1]);
     }
 
-    fclose(fp);
-    return 0;
-}
-
-#endif
-
-
-#include <stdio.h>
-#include <curl/curl.h>
-//linker options: -lcurl -lcurldll
-static unsigned char reqbuffer[512];
-
-
-size_t write_data(void *buff, size_t size, size_t nmemb, FILE *fp){
-    //回调函数，下载的数据通过这里写入本地文件
-    fwrite(buff, size, nmemb, fp);
-    return size*nmemb;
-}
-
-
-#define  REQURL "http://39.98.235.120:18080/rest/face/faceDevice/distinguish"
-
-int main(int argc, char* argv[]){
-	char *url= REQURL;
-	CURL *pCurl = NULL;
-	CURLcode res;
-
-	struct curl_slist *headerlist = NULL;
-
-	struct curl_httppost *post = NULL ;
-	struct curl_httppost *last = NULL;
-
-	curl_formadd(&post, &last, CURLFORM_COPYNAME, "busiDeviceId",
-			CURLFORM_COPYCONTENTS, "280941447020552",
-			CURLFORM_END);
-
-	curl_formadd(&post, &last,CURLFORM_COPYNAME, "file", //此处表示要传的参数名
-			CURLFORM_FILE, "1.jpg",                               //此处表示图片文件的路径
-			CURLFORM_CONTENTTYPE, "image/jpeg",
-			CURLFORM_END);
-
-	pCurl = curl_easy_init();
-
-	if (NULL != pCurl)
+    //signal(SIGINT, sig_handle);
+    fd = open_port(dev_name);          /* open the port */
+    if (fd < 0)
 	{
-		curl_easy_setopt(pCurl, CURLOPT_TIMEOUT, 5);
-		curl_easy_setopt(pCurl, CURLOPT_URL, url);
-		curl_easy_setopt(pCurl, CURLOPT_HTTPPOST, post);
-
-		//curl_easy_setopt(pCurl, CURLOPT_WRITEFUNCTION, write_data);
-
-		res = curl_easy_perform(pCurl);
-
-		if (res != CURLE_OK)
-		{
-			printf("curl_easy_perform() failed，error code is:%s\n", curl_easy_strerror(res));
-		}
-		printf("\n");
-
-		curl_easy_cleanup(pCurl);
-
-		printf("%s\n",reqbuffer);
-
+		printf("open %s err\n",dev_name);
+		exit(0);
 	}
-
-	return 0;
-
-
-
-}
+        
+    ret = setup_port(fd, 115200, 8, 'N', 1);  /* setup the port */
+    if (ret<0)
+        exit(0);
 
 #if 0
-CURL *hnd = curl_easy_init();
-
-curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "POST");
-curl_easy_setopt(hnd, CURLOPT_URL, "http://39.98.235.120:18080/rest/face/faceDevice/distinguish");
-
-struct curl_slist *headers = NULL;
-headers = curl_slist_append(headers, "cache-control: no-cache");
-headers = curl_slist_append(headers, "Connection: keep-alive");
-headers = curl_slist_append(headers, "Content-Length: 51344");
-headers = curl_slist_append(headers, "Content-Type: multipart/form-data; boundary=--------------------------829742580188631806746898");
-headers = curl_slist_append(headers, "Accept-Encoding: gzip, deflate");
-headers = curl_slist_append(headers, "Cookie: com.jeespring.session.id=8ecf50f4bfdd4d1b85134d816bc1d28d");
-headers = curl_slist_append(headers, "Host: 39.98.235.120:18080");
-headers = curl_slist_append(headers, "Postman-Token: 6704d69d-d949-4ff0-9680-7a5d902bf2f6,b0276c41-f138-48d4-9216-2736df4d3043");
-headers = curl_slist_append(headers, "Cache-Control: no-cache");
-headers = curl_slist_append(headers, "Accept: */*");
-headers = curl_slist_append(headers, "User-Agent: PostmanRuntime/7.15.2");
-headers = curl_slist_append(headers, "content-type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
-curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, headers);
-
-curl_easy_setopt(hnd, CURLOPT_POSTFIELDS, "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"busiDeviceId\"\r\n\r\n768755230312225\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"file\"; filename=\"66-3.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--");
-
-CURLcode ret = curl_easy_perform(hnd);
+    ret = pthread_create(&write_tid, NULL, write_port_thread, (void*)fd);
+    if (ret < 0)
+        unix_error_exit("Create write thread error.");
 #endif
+    ret = pthread_create(&read_tid, NULL, read_port_thread, (void*)fd);
+    if (ret < 0)
+        unix_error_exit("Create read thread error.");
+
+#if 0
+    ret = pthread_create(&exit_tid, NULL, exit_thread, NULL);
+    if (ret < 0)
+        unix_error_exit("Create exit thread error.");
+#endif
+
+    //pthread_join(write_tid, NULL);
+    pthread_join(read_tid, NULL);
+    //pthread_join(exit_tid, NULL);
+
+    close_port(fd);
+
+    return 0;
+}

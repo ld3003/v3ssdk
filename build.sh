@@ -181,7 +181,7 @@ function build_demos()
 
 
 	cd $APP_DIR/cam4g
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} test
+	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
 
 	cd $APP_DIR/serialport_linux/src
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} 

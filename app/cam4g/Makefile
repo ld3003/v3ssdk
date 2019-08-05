@@ -1,48 +1,82 @@
-CROSS_COMPILE    ?= arm-buildroot-linux-uclibcgnueabihf-
+#
+# (C) Copyleft 2011
+# Late Lee from http://www.latelee.org
+# 
+# A simple Makefile for *ONE* project(c or/and cpp file) in *ONE*  directory
+#
+# note: 
+# you can put head file(s) in 'include' directory, so it looks 
+# a little neat.
+#
+# usage: $ make
+#        $ make debug=y
+###############################################################################
 
-CPU = cortex-a7
-FPU = fpv4-sp-d16
+# cross compile...
+CROSS_COMPILE = arm-buildroot-linux-uclibcgnueabihf-
 
-AS                = $(CROSS_COMPILE)as
-LD                = $(CROSS_COMPILE)ld
-CC                = $(CROSS_COMPILE)gcc
-CXX               = $(CROSS_COMPILE)g++
-CPP               = $(CC) -E
-AR                = $(CROSS_COMPILE)ar
-NM                = $(CROSS_COMPILE)nm
-STRIP             = $(CROSS_COMPILE)strip
-OBJCOPY           = $(CROSS_COMPILE)objcopy
-OBJDUMP           = $(CROSS_COMPILE)objdump
-RANLIB            = $(CROSS_COMPILE)ranlib
-SIZE              = $(CROSS_COMPILE)size
+CC = $(CROSS_COMPILE)gcc
+CXX = $(CROSS_COMPILE)g++
+AR = $(CROSS_COMPILE)ar
 
-TOP_DIR           = $(shell pwd)
+ARFLAGS = cr
+RM = -rm -rf
+MAKE = make
 
-CFLAGS_inc_path   += -I$(TOP_DIR)
+CFLAGS = -Wall
+#debug = y
 
-# CFLAGS_inc_path   += -I$(TOP_DIR)external/jpeg-9a
+ifeq ($(debug), y)
+CFLAGS += -g
+else
+CFLAGS += -O2 -s
+endif
 
-# for H.264 hardware codec
-CFLAGS_inc_path   += -I$(TOP_DIR)/../../prebuilt/include/cedar
+DEFS = 
 
-#CFLAGS += -std=gnu99 -mthumb -mabi=aapcs-linux -mlittle-endian
-#CFLAGS += -fdata-sections -ffunction-sections
-#CFLAGS += -mcpu=$(CPU) -mtune=$(CPU) -mfpu=$(FPU) -mfloat-abi=hard
+CFLAGS += $(DEFS)
 
-SRC_HAL += main.c
-OBJ_HAL += $(patsubst %.c,%.o,$(SRC_HAL))
+LDFLAGS = $(LIBS)
 
-CFLAGS            += -O2 -ggdb3 -DNDEBUG
-CFLAGS            += $(CFLAGS_inc_path)
+INCDIRS = ./
 
-EXAMPLES += test
+CFLAGS += -I$(INCDIRS)
 
-all: $(EXAMPLES)
+LDFLAGS += -lpthread -lzbar -lopencv_core -lopencv_objdetect -lopencv_imgproc -lopencv_imgcodecs -lcurl -lm 
 
-.PHONY: clean
+# source file(s), including c file(s) cpp file(s)
+# you can also use $(wildcard *.c), etc.
+SRC_C   := $(wildcard *.c)
+SRC_CPP := $(wildcard *.cpp)
 
-test: $(OBJ_HAL)
-	$(CXX) $(CFLAGS) $(OBJ_HAL) -o $@ -Wl,--start-group -lzbar -lopencv_core -lopencv_objdetect -lopencv_imgproc -lopencv_imgcodecs -lcurl -lm -Wl,--end-group
+# object file(s)
+OBJ_C   := $(patsubst %.c,%.o,$(SRC_C))
+OBJ_CPP := $(patsubst %.cpp,%.o,$(SRC_CPP))
+
+
+# executable file
+target = cam4g
+
+###############################################################################
+
+all: $(target)
+
+$(target): $(OBJ_C) $(OBJ_CPP)
+	@echo "Generating executable file..." $(notdir $(target))
+	@$(CXX) $(CFLAGS) $^ -o $(target) $(LDFLAGS)
+
+# make all .c or .cpp
+%.o: %.c
+	@echo "Compling: " $(addsuffix .c, $(basename $(notdir $@)))
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.cpp
+	@echo "Compling: " $(addsuffix .cpp, $(basename $(notdir $@)))
+	@$(CXX) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f *~ *.o $(EXAMPLES)
+	@echo "cleaning..."
+	@$(RM) $(target)
+	@$(RM) *.o *.back *~
+
+.PHONY: all clean
