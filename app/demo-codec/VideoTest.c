@@ -9,29 +9,9 @@
 #define loge printf
 #define logd printf
 #define RUN_TEST printf("RUN_TEST __FILE__ %s __LINE__ %d \n",__FILE__,__LINE__);
-int yu12_nv12(unsigned int width, unsigned int height, unsigned char *addr_uv, unsigned char *addr_tmp_uv)
-{
-	unsigned int i, chroma_bytes;
-	unsigned char *u_addr = NULL;
-	unsigned char *v_addr = NULL;
-	unsigned char *tmp_addr = NULL;
 
-	chroma_bytes = width*height/4;
 
-	u_addr = addr_uv;
-	v_addr = addr_uv + chroma_bytes;
-	tmp_addr = addr_tmp_uv;
-
-	for(i=0; i<chroma_bytes; i++)
-	{
-		*(tmp_addr++) = *(u_addr++);
-		*(tmp_addr++) = *(v_addr++);
-	}
-
-	memcpy(addr_uv, addr_tmp_uv, chroma_bytes*2);	
-
-	return 0;
-}
+//v4l2_read_frame(cam, frame_ptr, &frame_len);
 
 int testmain()
 {
@@ -46,18 +26,14 @@ int testmain()
 	EXIFInfo exifinfo;
 	VencCyclicIntraRefresh sIntraRefresh;
 	unsigned int src_width,src_height,dst_width,dst_height;
-	unsigned char *uv_tmp_buffer = NULL;
-	
 
 	VencROIConfig sRoiConfig[4];
 
-	src_width = 1920;
-	src_height = 1080;
-	dst_width = 1920;
-	dst_height = 1080;
+	src_width = 1280;
+	src_height = 720;
+	dst_width = 1280;
+	dst_height = 720;
 
-
-	RUN_TEST;
 
 	// roi
 	sRoiConfig[0].bEnable = 1;
@@ -97,7 +73,6 @@ int testmain()
 
 
 	//intraRefresh
-	
 	sIntraRefresh.bEnable = 1;
 	sIntraRefresh.nBlockNumber = 10;
 
@@ -169,52 +144,27 @@ int testmain()
 	FILE *out_file = NULL;
 
 
-	static v4l2dev_t camera = {
+	v4l2dev_t camera = {
         -1,
 	};
+
 
 	v4l2_open(&camera, 0);
 	v4l2_enum_fmt(&camera);
 	v4l2_query_cap(&camera);
 	v4l2_s_input(&camera, 0);
-	v4l2_s_fmt(&camera, src_width, src_height, V4L2_PIX_FMT_YUV422P);
+	v4l2_s_fmt(&camera, src_width, src_height, V4L2_PIX_FMT_NV12);
 	v4l2_g_fmt(&camera);
 	v4l2_reqbufs(&camera, 4);
 	v4l2_stream(&camera, 1);
-
-	unsigned char *frame_ptr;
-	int      frame_len;
-
-	unsigned char   *rgb565_ptr;
-	unsigned char   *argb_ptr;
-
-	argb_ptr = malloc(src_width * src_height * 4);
-
-	while (1) {
-		v4l2_read_frame(&camera, (void *)&frame_ptr, &frame_len);
-		if (frame_len <= 0) {
-
-				printf("camera data 0 \r\n");
-				continue;
-		}
-
-		printf("frame_length == %d \r\n",frame_len);
-	}
-
 
 
 
 
 	if(codecType == VENC_CODEC_H264)
 	{
-		in_file = fopen("/mnt/extsd/video.yuv", "r");
-		if(in_file == NULL)
-		{
-			loge("open in_file fail\n");
-			return -1;
-		}
 		
-		out_file = fopen("./1080p.264", "wb");
+		out_file = fopen("./test.h264", "wb");
 		if(out_file == NULL)
 		{
 			loge("open out_file fail\n");
@@ -223,14 +173,8 @@ int testmain()
 	}
 	else
 	{
-		in_file = fopen("/mnt/extsd/pic.yuv", "r");
-		if(in_file == NULL)
-		{
-			loge("open in_file fail\n");
-			return -1;
-		}
 		
-		out_file = fopen("/mnt/extsd/test.jpg", "wb");
+		out_file = fopen("./test.jpg", "wb");
 		if(out_file == NULL)
 		{
 			loge("open out_file fail\n");
@@ -248,39 +192,58 @@ int testmain()
 	baseConfig.nDstWidth = dst_width;
 	baseConfig.nDstHeight = dst_height;
 	baseConfig.eInputFormat = VENC_PIXEL_YUV420SP;
+	//baseConfig.eInputFormat = VENC_PIXEL_YVU420SP;
 
 	bufferParam.nSizeY = baseConfig.nInputWidth*baseConfig.nInputHeight;
 	bufferParam.nSizeC = baseConfig.nInputWidth*baseConfig.nInputHeight/2;
 	bufferParam.nBufferNum = 4;
 	
+	RUN_TEST;
 
 	//创建压缩引擎
 	pVideoEnc = VideoEncCreate(codecType);
 
+	RUN_TEST;
 
 	if(codecType == VENC_CODEC_JPEG)
 	{
+		int JpegQuality = 1;
+		//VENC_IndexParamJpegQuality
+		VideoEncSetParameter(pVideoEnc, VENC_IndexParamJpegQuality, &JpegQuality);
 	  	VideoEncSetParameter(pVideoEnc, VENC_IndexParamJpegExifInfo, &exifinfo);
+		  RUN_TEST;
 	}
 	else if(codecType == VENC_CODEC_H264)
 	{
 		int value;
-		
+
+#if 0
+		/* H264 param */
+		VENC_IndexParamH264Param,						/**< reference type: VencH264Param */
+		VENC_IndexParamH264SPSPPS,                    	/**< reference type: VencHeaderData (read only)*/
+		VENC_IndexParamH264QPRange			= 0x100,	/**< reference type: VencQPRange */
+		VENC_IndexParamH264ProfileLevel,              	/**< reference type: VencProfileLevel */
+		VENC_IndexParamH264EntropyCodingCABAC,			/**< reference type: int(0:CAVLC 1:CABAC) */
+		VENC_IndexParamH264CyclicIntraRefresh,			/**< reference type: VencCyclicIntraRefresh */
+		VENC_IndexParamH264FixQP,						/**< reference type: VencH264FixQP */
+#endif
 		//设置压缩参数
+		RUN_TEST;
 		VideoEncSetParameter(pVideoEnc, VENC_IndexParamH264Param, &h264Param);
 
 		value = 0;
 		VideoEncSetParameter(pVideoEnc, VENC_IndexParamIfilter, &value);
 
+		RUN_TEST;
 		value = 0; //degree
 		VideoEncSetParameter(pVideoEnc, VENC_IndexParamRotation, &value);
 
-		//VideoEncSetParameter(pVideoEnc, VENC_IndexParamH264FixQP, &fixQP);
+		VideoEncSetParameter(pVideoEnc, VENC_IndexParamH264FixQP, &fixQP);
 
-		//VideoEncSetParameter(pVideoEnc, VENC_IndexParamH264CyclicIntraRefresh, &sIntraRefresh);
+		VideoEncSetParameter(pVideoEnc, VENC_IndexParamH264CyclicIntraRefresh, &sIntraRefresh);
 
 		value = 720/4;
-		//VideoEncSetParameter(pVideoEnc, VENC_IndexParamSliceHeight, &value);
+		VideoEncSetParameter(pVideoEnc, VENC_IndexParamSliceHeight, &value);
 
 		//VideoEncSetParameter(pVideoEnc, VENC_IndexParamROIConfig, &sRoiConfig[0]);
 		//VideoEncSetParameter(pVideoEnc, VENC_IndexParamROIConfig, &sRoiConfig[1]);
@@ -306,48 +269,32 @@ int testmain()
 	{
 		testNumber = 1;
 	}
-
 	//申请输入缓冲区
 	AllocInputBuffer(pVideoEnc, &bufferParam);
 
-	if(baseConfig.eInputFormat == VENC_PIXEL_YUV420SP)
+	unsigned char *frame_ptr = malloc(src_width*src_height*3);
+
+
+	while(/*testNumber > 0*/1)
 	{
-		uv_tmp_buffer = (unsigned char*)malloc(baseConfig.nInputWidth*baseConfig.nInputHeight/2);
-		if(uv_tmp_buffer == NULL)
-		{
-			loge("malloc uv_tmp_buffer fail\n");
-			return -1;
-		}
-	}
-	
-	while(testNumber > 0)
-	{
+		int frame_len;
+		//usleep(30*1000);
+		v4l2_read_frame(&camera, frame_ptr, &frame_len,&frame_ptr);
+		if (frame_len <= 0)
+			continue;
+
 		GetOneAllocInputBuffer(pVideoEnc, &inputBuffer);
-		{
-			unsigned int size1, size2;
-			
-			size1 = fread(inputBuffer.pAddrVirY, 1, baseConfig.nInputWidth*baseConfig.nInputHeight, in_file);
-			size2 = fread(inputBuffer.pAddrVirC, 1, baseConfig.nInputWidth*baseConfig.nInputHeight/2, in_file);
+		memcpy(inputBuffer.pAddrVirY,frame_ptr,baseConfig.nInputWidth*baseConfig.nInputHeight);
+		memcpy(inputBuffer.pAddrVirC,frame_ptr+baseConfig.nInputWidth*baseConfig.nInputHeight
+		,baseConfig.nInputWidth*baseConfig.nInputHeight);
 
-			if((size1!= baseConfig.nInputWidth*baseConfig.nInputHeight) || (size2!= baseConfig.nInputWidth*baseConfig.nInputHeight/2))
-			{
-				fseek(in_file, 0L, SEEK_SET);
-				size1 = fread(inputBuffer.pAddrVirY, 1, baseConfig.nInputWidth*baseConfig.nInputHeight, in_file);
-				size2 = fread(inputBuffer.pAddrVirC, 1, baseConfig.nInputWidth*baseConfig.nInputHeight/2, in_file);
-			}
-
-			
-			if(baseConfig.eInputFormat == VENC_PIXEL_YUV420SP)
-			{
-				yu12_nv12(baseConfig.nInputWidth, baseConfig.nInputHeight, inputBuffer.pAddrVirC, uv_tmp_buffer);
-			}
-		}
-		
+		#if 1
 		inputBuffer.bEnableCorp = 0;
 		inputBuffer.sCropInfo.nLeft =  240;
 		inputBuffer.sCropInfo.nTop  =  240;
 		inputBuffer.sCropInfo.nWidth  =  240;
 		inputBuffer.sCropInfo.nHeight =  240;
+		#endif
 
 		FlushCacheAllocInputBuffer(pVideoEnc, &inputBuffer);
 
@@ -357,8 +304,9 @@ int testmain()
 		AlreadyUsedInputBuffer(pVideoEnc,&inputBuffer);
 		ReturnOneAllocInputBuffer(pVideoEnc, &inputBuffer);
 
+
 		GetOneBitstreamFrame(pVideoEnc, &outputBuffer);
-		//logi("size: %d,%d", outputBuffer.nSize0,outputBuffer.nSize1);
+		printf("size: %d,%d", outputBuffer.nSize0,outputBuffer.nSize1);
 
 		fwrite(outputBuffer.pData0, 1, outputBuffer.nSize0, out_file);
 
@@ -366,13 +314,13 @@ int testmain()
 		{
 			fwrite(outputBuffer.pData1, 1, outputBuffer.nSize1, out_file);
 		}
-			
+	
 		FreeOneBitStreamFrame(pVideoEnc, &outputBuffer);
 
 		if(h264Param.nCodingMode==VENC_FIELD_CODING && codecType==VENC_CODEC_H264)
 		{
 			GetOneBitstreamFrame(pVideoEnc, &outputBuffer);
-			//logi("size: %d,%d", outputBuffer.nSize0,outputBuffer.nSize1);
+			printf("size: %d,%d", outputBuffer.nSize0,outputBuffer.nSize1);
 
 			fwrite(outputBuffer.pData0, 1, outputBuffer.nSize0, out_file);
 
@@ -389,9 +337,6 @@ int testmain()
 
 out:	
 	fclose(out_file);
-	fclose(in_file);
-	if(uv_tmp_buffer)
-		free(uv_tmp_buffer);
 
 	return 0;
 }

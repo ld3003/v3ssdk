@@ -3,6 +3,12 @@
 
 #include <linux/videodev2.h>
 
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
 struct v4l2dev_buf {
 	struct v4l2_buffer v4l2buf;
 	void               *start;
@@ -28,8 +34,16 @@ int v4l2_g_fmt(v4l2dev_t *dev);
 int v4l2_s_fmt(v4l2dev_t *dev, int w, int h, int pixfmt);
 int v4l2_reqbufs(v4l2dev_t *dev, int bufsnr);
 int v4l2_stream(v4l2dev_t *dev, int on);
-int v4l2_read_frame(v4l2dev_t *dev, void **data, int *dlen);
+int v4l2_read_frame(v4l2dev_t *dev, unsigned char*data, int *dlen , unsigned char **ppp);
 int v4l2_open(v4l2dev_t *dev, int idx);
 int v4l2_close(v4l2dev_t *dev);
+
+
+#ifdef __cplusplus
+
+}
+
+#endif /* end of __cplusplus */
+
 
 #endif /* __V4L2DEV_H__ */

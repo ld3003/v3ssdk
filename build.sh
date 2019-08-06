@@ -169,6 +169,9 @@ function build_demos()
 	cd $APP_DIR/demo-camera/
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} demo-camera
 	
+	cd $APP_DIR/demo-codec/
+	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
+
 	cd $APP_DIR/demo-qt
   	$TOP_DIR/buildroot/out/host/bin/qmake
 	make -j${logicalNumber}
@@ -200,6 +203,8 @@ function build_demos()
 	cmake ../
 	make -j${logicalNumber}
 
+	cd $APP_DIR/demo-codec/
+	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
 
 }
 

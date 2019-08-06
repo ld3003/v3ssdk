@@ -48,6 +48,7 @@
 #include "serialport.h"
 #include "error-log.h"
 #include "saveppic.h"
+#include "pushpic.h"
 
 pthread_t write_tid; /**< write thread */
 pthread_t read_tid;  /**< read thread */
@@ -77,6 +78,14 @@ static void process_recv_serialport(int fd)
     }
     else if (strstr(tmp, "AT+PUSHPIC"))
     {
+        pushpic();
+        snprintf(tmp, sizeof(tmp), "ERROR NOPIC");
+        write(fd, tmp, strlen(tmp));
+    }
+    else if (strstr(tmp, "AT+AUTO"))
+    {
+        getpic();
+        pushpic();
         snprintf(tmp, sizeof(tmp), "ERROR NOPIC");
         write(fd, tmp, strlen(tmp));
     }

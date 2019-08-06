@@ -83,7 +83,7 @@ int v4l2_g_fmt(v4l2dev_t *dev)
 		dbg_info("\tFailed!\n");
 		return -1;
 	}
-	dbg_info("\nPIXFMT = '%c%c%c%c'\n",
+	dbg_info("\n6666 PIXFMT = '%c%c%c%c'\n",
 	       (dev->fmt.fmt.pix.pixelformat)       & 0xFF,
 	       (dev->fmt.fmt.pix.pixelformat >> 8)  & 0xFF,
 	       (dev->fmt.fmt.pix.pixelformat >> 16) & 0xFF,
@@ -180,7 +180,7 @@ int v4l2_stream(v4l2dev_t *dev, int on)
 	return ioctl(dev->fd, on ? VIDIOC_STREAMON : VIDIOC_STREAMOFF, &type);
 }
 
-int v4l2_read_frame(v4l2dev_t *dev, void **data, int *dlen)
+int v4l2_read_frame(v4l2dev_t *dev, unsigned char *data, int *dlen , unsigned char **ppp)
 {
 	int ret;
 	fd_set fds;
@@ -212,25 +212,24 @@ int v4l2_read_frame(v4l2dev_t *dev, void **data, int *dlen)
 		return ret;
 	}
 
-//	dbg_info("A frame here, start : %08x\n", dev->bufs[v4l2buf.index].start);
+	//printf("A frame here, start : %08x\n", dev->bufs[v4l2buf.index].start);
 	if (dev->bufs[v4l2buf.index].v4l2buf.length > 0) {
 		tick = get_timestamp();
-		
-		*data = malloc(dev->bufs[v4l2buf.index].v4l2buf.length);
-		if (*data) {
-			*dlen = dev->bufs[v4l2buf.index].v4l2buf.length;
-			memcpy(*data, (void *)(dev->bufs[v4l2buf.index].start), *dlen);
-		}
+		*dlen = dev->bufs[v4l2buf.index].v4l2buf.length;
+		memcpy(data, (unsigned char *)(dev->bufs[v4l2buf.index].start), *dlen);
+		//ppp = (unsigned char *)(dev->bufs[v4l2buf.index].start);
+		//printf("frame length : [%02x][%02x] %d\n",data[0],data[1],dev->bufs[v4l2buf.index].v4l2buf.length);
+		*dlen = dev->bufs[v4l2buf.index].v4l2buf.length;
 
 //		print_timestamp("frame_copy", get_timestamp() - tick);
 	}
 
 	/* put the buf back */
-        v4l2buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    v4l2buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	v4l2buf.memory = V4L2_MEMORY_MMAP;
 	ret = ioctl(dev->fd, VIDIOC_QBUF, &v4l2buf);
 //	dbg_info("VIDIOC_QBUF: %d\n", ret);
-	
+
 	return ret;
 }
 
