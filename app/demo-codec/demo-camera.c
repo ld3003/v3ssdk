@@ -127,13 +127,20 @@ static v4l2dev_t camera = {
 	-1,
 };
 
+#include "VideoTest.h"
+
 int main(int argc, const char **argv)
 {
-        int ret;
+    int ret;
 	rectangle_t roi;
 	int netdbg_connected = 0;
 	char title[16];
 	int w, h;
+
+
+	testmain();
+
+	
 	
 	if (parse_args(argc, argv) < 0) {
 		return -1;

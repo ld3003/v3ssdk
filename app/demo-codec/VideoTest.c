@@ -1,10 +1,14 @@
-#include "log.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "vencoder.h"
 #include <time.h>
+#include "v4l2dev.h"
 
+#define log printf
+#define loge printf
+#define logd printf
+#define RUN_TEST printf("RUN_TEST __FILE__ %s __LINE__ %d \n",__FILE__,__LINE__);
 int yu12_nv12(unsigned int width, unsigned int height, unsigned char *addr_uv, unsigned char *addr_tmp_uv)
 {
 	unsigned int i, chroma_bytes;
@@ -29,7 +33,7 @@ int yu12_nv12(unsigned int width, unsigned int height, unsigned char *addr_uv, u
 	return 0;
 }
 
-int tmp()
+int testmain()
 {
 	VencBaseConfig baseConfig;
 	VencAllocateBufferParam bufferParam;
@@ -51,6 +55,9 @@ int tmp()
 	src_height = 1080;
 	dst_width = 1920;
 	dst_height = 1080;
+
+
+	RUN_TEST;
 
 	// roi
 	sRoiConfig[0].bEnable = 1;
@@ -116,7 +123,8 @@ int tmp()
 	h264Param.sQPRange.nMaxqp = 40;
 
 
-	int codecType = VENC_CODEC_H264;
+	//int codecType = VENC_CODEC_H264;
+	int codecType = VENC_CODEC_JPEG;
 	int testNumber = 70;
 
 	strcpy((char*)exifinfo.CameraMake,		"allwinner make test");
@@ -160,9 +168,46 @@ int tmp()
 	FILE *in_file = NULL;
 	FILE *out_file = NULL;
 
+
+	static v4l2dev_t camera = {
+        -1,
+	};
+
+	v4l2_open(&camera, 0);
+	v4l2_enum_fmt(&camera);
+	v4l2_query_cap(&camera);
+	v4l2_s_input(&camera, 0);
+	v4l2_s_fmt(&camera, src_width, src_height, V4L2_PIX_FMT_YUV422P);
+	v4l2_g_fmt(&camera);
+	v4l2_reqbufs(&camera, 4);
+	v4l2_stream(&camera, 1);
+
+	unsigned char *frame_ptr;
+	int      frame_len;
+
+	unsigned char   *rgb565_ptr;
+	unsigned char   *argb_ptr;
+
+	argb_ptr = malloc(src_width * src_height * 4);
+
+	while (1) {
+		v4l2_read_frame(&camera, (void *)&frame_ptr, &frame_len);
+		if (frame_len <= 0) {
+
+				printf("camera data 0 \r\n");
+				continue;
+		}
+
+		printf("frame_length == %d \r\n",frame_len);
+	}
+
+
+
+
+
 	if(codecType == VENC_CODEC_H264)
 	{
-		in_file = fopen("/root/mnt/repos/codec-lte/demo/data/stream/1080p.yuv", "r");
+		in_file = fopen("/mnt/extsd/video.yuv", "r");
 		if(in_file == NULL)
 		{
 			loge("open in_file fail\n");
@@ -178,14 +223,14 @@ int tmp()
 	}
 	else
 	{
-		in_file = fopen("/data/camera/720p-30zhen.yuv", "r");
+		in_file = fopen("/mnt/extsd/pic.yuv", "r");
 		if(in_file == NULL)
 		{
 			loge("open in_file fail\n");
 			return -1;
 		}
 		
-		out_file = fopen("/data/camera/test.jpg", "wb");
+		out_file = fopen("/mnt/extsd/test.jpg", "wb");
 		if(out_file == NULL)
 		{
 			loge("open out_file fail\n");
@@ -208,6 +253,8 @@ int tmp()
 	bufferParam.nSizeC = baseConfig.nInputWidth*baseConfig.nInputHeight/2;
 	bufferParam.nBufferNum = 4;
 	
+
+	//创建压缩引擎
 	pVideoEnc = VideoEncCreate(codecType);
 
 
@@ -219,6 +266,7 @@ int tmp()
 	{
 		int value;
 		
+		//设置压缩参数
 		VideoEncSetParameter(pVideoEnc, VENC_IndexParamH264Param, &h264Param);
 
 		value = 0;
@@ -240,8 +288,10 @@ int tmp()
 		//VideoEncSetParameter(pVideoEnc, VENC_IndexParamROIConfig, &sRoiConfig[3]);
 	}
 
+	//初始化视频编码
 	VideoEncInit(pVideoEnc, &baseConfig);
 
+	
 	if(codecType == VENC_CODEC_H264)
 	{
 		unsigned int head_num = 0;
@@ -257,6 +307,7 @@ int tmp()
 		testNumber = 1;
 	}
 
+	//申请输入缓冲区
 	AllocInputBuffer(pVideoEnc, &bufferParam);
 
 	if(baseConfig.eInputFormat == VENC_PIXEL_YUV420SP)
