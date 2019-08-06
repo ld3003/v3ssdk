@@ -59,6 +59,29 @@ char *buf = "Are you going to die? To be or not to be, that is the question.\r\n
 /** data we receive */
 char tmp[512];
 
+static void process_recv_serialport(int fd)
+{
+    if (strstr(tmp, "AT+GETPIC"))
+    {
+        if (getpic())
+        {
+            snprintf(tmp, sizeof(tmp), "OK\r\n");
+            write(fd, tmp, strlen(tmp));
+        }
+        else
+        {
+
+            snprintf(tmp, sizeof(tmp), "ERROR NOPIC\r\n");
+            write(fd, tmp, strlen(tmp));
+        }
+    }
+    else if (strstr(tmp, "AT+PUSHPIC"))
+    {
+        snprintf(tmp, sizeof(tmp), "ERROR NOPIC");
+        write(fd, tmp, strlen(tmp));
+    }
+}
+
 /** 
  * write_port_thread - A thread that writes data to the port
  * 
@@ -101,37 +124,23 @@ void *read_port_thread(void *argc)
 {
     int num;
     int fd;
-    
+
     fd = (int)argc;
     while (1)
     {
         while ((num = read(fd, tmp, 512)) > 0)
         {
             debug_msg("read num: %d\n", num);
-            tmp[num+1] = '\0';
+            tmp[num + 1] = '\0';
             printf("[%s]\n", tmp);
-
-            if (strstr(tmp,"AT+GETPIC"))
-            {
-                if (getpic())
-                {
-                    snprintf(tmp,sizeof(tmp),"OK");
-                    write(fd, tmp, strlen(tmp));
-                }else{
-
-                    snprintf(tmp,sizeof(tmp),"ERROR NOPIC");
-                    write(fd, tmp, strlen(tmp));
-
-                }
-            }
-
-            
+            process_recv_serialport(fd);
         }
+        
         //sleep(1);
         printf("READ:\n");
         if (num < 0)
             pthread_exit(NULL);
-	}
+    }
     pthread_exit(NULL);
 }
 
@@ -154,7 +163,7 @@ void sig_handle(int sig_num)
  * @param argc : Here means the port(specified by the fd).
  * 
  */
-void* exit_thread(void* argc)
+void *exit_thread(void *argc)
 {
     while (1)
     {
@@ -173,30 +182,30 @@ void* exit_thread(void* argc)
  * main - main function
  * 
  */
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     int fd;
     int ret;
-	char dev_name[32] = {0};
+    char dev_name[32] = {0};
 
     opencam();
-    
+
     strcpy(dev_name, "/dev/ttyS2");
     if (argc == 2)
     {
-        sprintf(dev_name,"%s",argv[1]);
+        sprintf(dev_name, "%s", argv[1]);
     }
 
     //signal(SIGINT, sig_handle);
-    fd = open_port(dev_name);          /* open the port */
+    fd = open_port(dev_name); /* open the port */
     if (fd < 0)
-	{
-		printf("open %s err\n",dev_name);
-		exit(0);
-	}
-        
-    ret = setup_port(fd, 115200, 8, 'N', 1);  /* setup the port */
-    if (ret<0)
+    {
+        printf("open %s err\n", dev_name);
+        exit(0);
+    }
+
+    ret = setup_port(fd, 115200, 8, 'N', 1); /* setup the port */
+    if (ret < 0)
         exit(0);
 
 #if 0
@@ -204,7 +213,7 @@ int main(int argc, char* argv[])
     if (ret < 0)
         unix_error_exit("Create write thread error.");
 #endif
-    ret = pthread_create(&read_tid, NULL, read_port_thread, (void*)fd);
+    ret = pthread_create(&read_tid, NULL, read_port_thread, (void *)fd);
     if (ret < 0)
         unix_error_exit("Create read thread error.");
 

@@ -35,8 +35,10 @@ int get_mac(char * mac, int len_limit , long long *devid , char *ethname)
     tmp[4]=ifreq.ifr_hwaddr.sa_data[4];
     tmp[5]=ifreq.ifr_hwaddr.sa_data[5];
 
-    printf("mac addr id ： %lld \n",* devid);
+    printf("mac addr id ： %lld \n",*devid);
 
-    return snprintf (mac, len_limit, "%X:%X:%X:%X:%X:%X", (unsigned char) ifreq.ifr_hwaddr.sa_data[0], (unsigned char) ifreq.ifr_hwaddr.sa_data[1], (unsigned char) ifreq.ifr_hwaddr.sa_data[2], (unsigned char) ifreq.ifr_hwaddr.sa_data[3], (unsigned char) ifreq.ifr_hwaddr.sa_data[4], (unsigned char) ifreq.ifr_hwaddr.sa_data[5]);
+    return snprintf(mac,len_limit,"%lld",*devid);
+
+    //return snprintf (mac, len_limit, "%X:%X:%X:%X:%X:%X", (unsigned char) ifreq.ifr_hwaddr.sa_data[0], (unsigned char) ifreq.ifr_hwaddr.sa_data[1], (unsigned char) ifreq.ifr_hwaddr.sa_data[2], (unsigned char) ifreq.ifr_hwaddr.sa_data[3], (unsigned char) ifreq.ifr_hwaddr.sa_data[4], (unsigned char) ifreq.ifr_hwaddr.sa_data[5]);
 }
 
