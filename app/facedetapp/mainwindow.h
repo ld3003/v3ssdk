@@ -33,13 +33,17 @@ public slots:
     void imgFlush(QImage img);
     void tipmsg(QString);
     void tipmsgTimeout();
+    void syschecktimeout();
 
 private:
     Ui::MainWindow *ui;
     CamThread *camThread;
     DetectThread *detThread;
+
+    QLabel *topBar;
     QLabel *tipLable;
     QTimer *tipMsgtimer;
+    QTimer *syschecktimer;
 
 
 };

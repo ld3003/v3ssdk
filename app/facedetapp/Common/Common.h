@@ -17,6 +17,16 @@
 extern "C" {
 #endif
 
+#define DEV_WINDOWS_W       272
+#define DEV_WINDOWS_H       480
+#define ETH_NAME            "enp0s3"
+
+
+
+int get_mac(char * mac, int len_limit , long long *devid , char *ethname);
+char *net_detect(char* net_name);
+int get_local_ip(const char *eth_inf, char *ip);
+
 inline void time_consuming_start(struct timeval *gTpstart , struct timeval *gTpend)
 {
     memset(gTpstart,0,sizeof(struct timeval));
@@ -36,7 +46,7 @@ inline float time_consuming_print(char *strPuts , struct timeval *gTpstart , str
 
 }
 
-int get_mac(char * mac, int len_limit , long long *devid , char *ethname);
+
 
 #ifdef __cplusplus
 }

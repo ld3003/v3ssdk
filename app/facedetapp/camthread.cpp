@@ -31,7 +31,6 @@ CamThread::CamThread(QObject *obj)
         qDebug() << "opencamera error" ;
     }
 
-
 }
 
 
@@ -47,7 +46,8 @@ void CamThread::run()
 
         mImglocker.lock();
         *mCap >> mImageData1;
-        //cv::cvtColor(mImageData1, mImageData1, CV_BGR2RGB);
+        cv::Rect rect(184, 0, DEV_WINDOWS_W, DEV_WINDOWS_H);
+        mImageData1 = mImageData1(rect);
         mImageData2 = mImageData1;
 
         //time_consuming_print("fetch img time 1",&gTpstart,&gTpend);
@@ -56,7 +56,7 @@ void CamThread::run()
         if (mImageData1.empty())
             continue;
 
-        #define RESIZE_VAL 2
+#define RESIZE_VAL 1
         cv::resize(mImageData1, mImageData1, cv::Size(mImageData1.cols/RESIZE_VAL, mImageData1.rows/RESIZE_VAL),0,0);
 
         //time_consuming_print("fetch img time 2",&gTpstart,&gTpend);
@@ -70,8 +70,9 @@ void CamThread::run()
         rectangle(tmppic, cv::Rect(mDetRect[0]/RESIZE_VAL, mDetRect[1]/RESIZE_VAL, mDetRect[2]/RESIZE_VAL, mDetRect[3]/RESIZE_VAL), cv::Scalar(0, 255, 0), 2);
         mDetlocker.unlock();
 
+
+
         Img = QImage((const uchar*)(tmppic.data), tmppic.cols, tmppic.rows, tmppic.cols * tmppic.channels(), QImage::Format_RGB888);
-        //time_consuming_print("fetch img time 4",&gTpstart,&gTpend);
         emit imgReady(Img);
 
     }

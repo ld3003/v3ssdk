@@ -25,6 +25,7 @@ public:
     CamThread *mCt;
     QThreadPool tp;
     MTCNN *mtcnn;
+    unsigned char * pBuffer;
 
 signals:
     void tipmsg(QString str);

@@ -1,6 +1,7 @@
 #include "Communiction.h"
 #include "curl/curl.h"
 #include "Common.h"
+#include "cJSON.h"
 
 #include <stdio.h>
 #include <curl/curl.h>
@@ -9,10 +10,36 @@
 
 static unsigned char reqbuffer[512];
 
+
+void json_2_data(char * in_json)
+{
+    cJSON * pSub;
+    cJSON * pJson;
+    //printf("json_2_data success 2222222222222222@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+    if(NULL == in_json){return;}
+    pJson = cJSON_Parse(in_json);
+    if(NULL == pJson){return;}
+
+    printf("json_2_data success \n");
+
+    pSub = cJSON_GetObjectItem(pJson, "MESSAGE");
+    if(NULL != pSub)
+    {
+        printf("MESSAGE:%s\n", pSub->valuestring);
+    }
+
+    cJSON_Delete(pJson);
+
+    return ;
+    //
+}
+
+
+
+
 size_t  write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
 
     printf("\n\n\n[%s]\n\n\n\n",ptr);
-    //int written = fwrite(ptr, size, nmemb, (FILE *)fp);
     snprintf(reqbuffer,sizeof(reqbuffer),"%s",ptr,nmemb);
     return nmemb;
 }
@@ -39,18 +66,18 @@ NH_ERRCODE communiction_pushpic(COMMUNICTION *comm, PICTURE *pic, COMMUNICTION_R
     struct curl_httppost *last = NULL;
 
 
-    get_mac(mac,sizeof(mac),&devid,"eth0");
+    get_mac(mac,sizeof(mac),&devid,ETH_NAME);
 
 
     curl_formadd(&post, &last, CURLFORM_COPYNAME, "busiDeviceId",
-                CURLFORM_COPYCONTENTS, mac,
-                CURLFORM_END);
+                 CURLFORM_COPYCONTENTS, mac,
+                 CURLFORM_END);
 
 
     curl_formadd(&post, &last,CURLFORM_COPYNAME, "file", //此处表示要传的参数名
-            CURLFORM_FILE, pic->path,                               //此处表示图片文件的路径
-            CURLFORM_CONTENTTYPE, "image/jpeg",
-            CURLFORM_END);
+                 CURLFORM_FILE, pic->path,                               //此处表示图片文件的路径
+                 CURLFORM_CONTENTTYPE, "image/jpeg",
+                 CURLFORM_END);
 
     pCurl = curl_easy_init();
 
@@ -60,7 +87,7 @@ NH_ERRCODE communiction_pushpic(COMMUNICTION *comm, PICTURE *pic, COMMUNICTION_R
         curl_easy_setopt(pCurl, CURLOPT_URL, url);
         curl_easy_setopt(pCurl, CURLOPT_HTTPPOST, post);
 
-        //curl_easy_setopt(pCurl, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(pCurl, CURLOPT_WRITEFUNCTION, write_data);
 
         res = curl_easy_perform(pCurl);
 
@@ -68,22 +95,50 @@ NH_ERRCODE communiction_pushpic(COMMUNICTION *comm, PICTURE *pic, COMMUNICTION_R
         {
             printf("curl_easy_perform() failed，error code is:%s\n", curl_easy_strerror(res));
         }
-        printf("\n");
+
 
         curl_easy_cleanup(pCurl);
 
-        printf("%s\n",reqbuffer);
+        //printf("%s\n",reqbuffer);
 
     }
+
+    snprintf(comm->resp,512,"%s",reqbuffer);
 
     return NH_ERR_NOERR;
 
-    result->tmp = 0;
-    if (strstr(reqbuffer,"faceIndex"))
+    if (strstr(reqbuffer,"MESSAGE"))
     {
-        printf("!!!!!!!!!!!!!!!!OK\n");
-        result->tmp = 1;
+
+        char *in_json = strstr(reqbuffer,"MESSAGE");
+        cJSON * pSub;
+        cJSON * pJson;
+        //printf("json_2_data success 2222222222222222@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+        if(NULL == in_json){
+            goto err;
+        }
+        pJson = cJSON_Parse(in_json);
+        if(NULL == pJson){
+            goto err;
+        }
+
+        printf("json_2_data success \n");
+
+        pSub = cJSON_GetObjectItem(pJson, "MESSAGE");
+        if(NULL != pSub)
+        {
+            printf("MESSAGE:%s\n", pSub->valuestring);
+            snprintf(comm->resp,512,"%s",pSub->valuestring);
+
+        }
+
+        cJSON_Delete(pJson);
+
+
+        //json_2_data(reqbuffer);
     }
+
+    err:
 
 
     return NH_ERR_NOERR;

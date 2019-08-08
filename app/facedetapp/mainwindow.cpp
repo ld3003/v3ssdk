@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "Common/Common.h"
 
 #include <QImage>
 #include <QPixmap>
@@ -13,8 +14,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     mw = this;
-    showFullScreen();
+    //showFullScreen();
+
     ui->setupUi(this);
+
+
+    setGeometry(0,0,DEV_WINDOWS_W,DEV_WINDOWS_H);
+    ui->label->setGeometry(0,0,DEV_WINDOWS_W,DEV_WINDOWS_H);
 
 
     camThread = new CamThread(0);
@@ -26,22 +32,29 @@ MainWindow::MainWindow(QWidget *parent) :
     camThread->start();
     detThread->start();
 
+    topBar = new QLabel(this);
+    topBar->setGeometry(0,0,DEV_WINDOWS_W,100);
+
     tipLable = new QLabel(this);
-    tipLable->setGeometry(0,0,this->width(),this->height());
+    tipLable->setGeometry(0,100,DEV_WINDOWS_W,DEV_WINDOWS_H-100);
     tipLable->hide();
 
     QFont ft;
-    ft.setPointSize(100);
+    ft.setPointSize(24);
     tipLable->setFont(ft);
-
     QPalette pa;
     pa.setColor(QPalette::WindowText,Qt::red);
     tipLable->setPalette(pa);
-
     tipLable->setAlignment(Qt::AlignCenter);
+
 
     tipMsgtimer = new QTimer(this);
     connect(tipMsgtimer,SIGNAL(timeout()),this,SLOT(tipmsgTimeout()));
+
+    syschecktimer = new QTimer(this);
+    connect(syschecktimer,SIGNAL(timeout()),this,SLOT(syschecktimeout()));
+
+    syschecktimer->start(1000);
 
 
 }
@@ -65,7 +78,23 @@ void MainWindow::tipmsg(QString str)
 }
 void MainWindow::tipmsgTimeout()
 {
-    tipLable->setText(QString());
+    tipLable->setText("");
+}
+
+void MainWindow::syschecktimeout()
+{
+    char mac[32];
+    char ip[16];
+
+    long long devid;
+    get_local_ip(ETH_NAME,ip);
+    get_mac(mac,sizeof(mac),&devid,ETH_NAME);
+    topBar->setText(QString("DEVICE ID:").append(QString(mac).append("\n")
+                                                 .append("IPADDRESS:").append(QString(ip).append("\n")
+                                                                              .append("NETSTATUS:").append(QString(net_detect(ETH_NAME)).append("\n"))
+
+                                                                              )));
+
 }
 
 MainWindow::~MainWindow()

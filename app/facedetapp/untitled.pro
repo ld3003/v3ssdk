@@ -6,6 +6,9 @@
 
 QT       += core gui
 
+DEFINES += $${QT_ARCH}
+
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = untitled
@@ -32,25 +35,24 @@ SOURCES += \
         Common/Common.c \
         Common/Common_nh_type.c \
         Communiction/Communiction.c \
+        cJSON.c \
         faceregrequest.cpp \
         main.cpp \
         mainwindow.cpp \
         camthread.cpp \
-        detectthread.cpp \
-    mobilefacenet.cpp \
-    mtcnn.cpp
+        detectthread.cpp
 
 HEADERS += \
         Common/Common.h \
         Common/Common_nh_type.h \
         Communiction/Communiction.h \
+        cJSON.h \
         faceregrequest.h \
         mainwindow.h \
         camthread.h \
         detectthread.h \
-    mobilefacenet.h \
-        ui_mainwindow.h \
-    mtcnn.h
+        mobilefacenet.h \
+        ui_mainwindow.h
 
 FORMS += \
         mainwindow.ui
@@ -59,13 +61,41 @@ FORMS += \
 INCLUDEPATH += $${PWD}/Common/
 INCLUDEPATH += $${PWD}/Communiction/
 
-LIBS    += -ljpeg -lcurl -lopencv_core -lopencv_objdetect -lopencv_imgproc -lopencv_imgcodecs -lopencv_videoio -lyuv -lzbar
-LIBS    += ../libfacedetection/build/libfacedetection.a
-LIBS    += ../ncnn/build/src/libncnn.a
-LIBS    += -fopenmp
+LIBS    += -ljpeg -lcurl -lopencv_core -lopencv_objdetect -lopencv_imgproc -lopencv_imgcodecs -lopencv_videoio
 
-INCLUDEPATH += ../ncnn/src/
-INCLUDEPATH += ../ncnn/build/src/
+
+
+
+
+contains(DEFINES,x86_64){
+
+        INCLUDEPATH += ../ncnn_x64/src/
+        INCLUDEPATH += ../ncnn_x64/build/src/
+
+        LIBS    += ../libfacedetection_x64/build/libfacedetection.a
+        LIBS    += ../ncnn_x64/build/src/libncnn.a
+        LIBS    += -lGL -ltiff
+        LIBS    += -fopenmp
+        message(platform x86_64)
+
+        SOURCES += mtcnn.cpp
+        SOURCES += mobilefacenet.cpp
+        HEADERS += mtcnn.h
+
+}else{
+        INCLUDEPATH += ../ncnn/src/
+        INCLUDEPATH += ../ncnn/build/src/
+
+        LIBS    += ../libfacedetection/build/libfacedetection.a
+        LIBS    += ../ncnn/build/src/libncnn.a
+        LIBS    += -fopenmp
+        message(platform arm)
+
+        SOURCES += mtcnn.cpp
+        SOURCES += mobilefacenet.cpp
+        HEADERS += mtcnn.h
+
+}
 
 
 # Default rules for deployment.

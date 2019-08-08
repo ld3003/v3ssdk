@@ -35,6 +35,8 @@ private:
     QMutex mDetlocker;
     int mDetRect[4];
 
+    QTimer *clearRect;
+
 
 
 };

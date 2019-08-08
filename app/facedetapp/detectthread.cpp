@@ -18,30 +18,19 @@
 using namespace std;
 using namespace cv;
 
-#define RESET_VAL 4
+#define RESET_VAL 1
 #define DETECT_BUFFER_SIZE 0x20000
 #define USE_MTCNN
 
-
-void Jpegcompress(const cv::Mat& src, cv::Mat& dest, int quality)
-{
-    std::vector<uchar> buff;
-    std::vector<int> params;
-    /*IMWRITE_JPEG_QUALITY For JPEG, it can be a quality from 0 to 100
-    (the higher is the better). Default value is 95 */
-    params.push_back(cv::IMWRITE_JPEG_QUALITY);
-    params.push_back(quality);
-    //将图像压缩编码到缓冲流区域
-    cv::imencode(".jpg", src, buff, params);
-    //将压缩后的缓冲流内容解码为Mat，进行后续的处理
-    dest = cv::imdecode(buff, -1);
-    //cv::imshow("src", src);
-    //cv::imshow("dst", dest);
-}
+#define RNU_TEST printf("RUN-TEST %s : %d \n",__FILE__,__LINE__);
 
 DetectThread::DetectThread(CamThread *ct)
 {
+#ifdef USE_MTCNN
     mtcnn = new MTCNN("./models");
+#endif
+
+    pBuffer = (unsigned char *)malloc(DETECT_BUFFER_SIZE);
     mCt = ct;
     tp.setMaxThreadCount(5);
 }
@@ -51,10 +40,6 @@ void DetectThread::run()
 {
 
     char checkflag = 0;
-
-
-
-
 
     for(;;)
     {
@@ -90,6 +75,31 @@ void DetectThread::run()
 
             mCt->setDetRect(x*RESET_VAL,y*RESET_VAL,w*RESET_VAL,h*RESET_VAL);
 
+
+            //
+
+            printf("ROI X %d Y %d W %d H %d\n",x,y,w,h);
+            if (((x+w) > image1.cols) || ((y+h) > image1.rows) || (x<0) || (y<0))
+                continue;
+
+            Rect rect(x, y, w, h);
+            image_roi = image1(rect);
+
+            if (tp.activeThreadCount() < 1 )
+            {
+                FaceRegRequest *FR = new FaceRegRequest(image_roi);
+                if(!FR->autoDelete()) {
+                    qDebug()<<"QRunnable's autoDelete default value is not true";
+                    FR->setAutoDelete(true);
+                }
+                tp.start(FR);
+            }
+
+            //FR->run();
+            //FR->deleteLater();
+
+
+
         }
 
         continue;
@@ -99,14 +109,20 @@ void DetectThread::run()
 #ifdef USE_LIBDET
 
 
-        unsigned char * pBuffer = (unsigned char *)malloc(DETECT_BUFFER_SIZE);
+
+
+
+        RNU_TEST;
 
         cv::resize(image1, image3, cv::Size(image1.cols/RESET_VAL, image1.rows/RESET_VAL),0,0);
+        RNU_TEST;
         struct timeval gTpstart ,gTpend;
         time_consuming_start(&gTpstart,&gTpend);
+        RNU_TEST;
         //time_consuming_print("detect time",&gTpstart,&gTpend);
         pResults = facedetect_cnn(pBuffer, (unsigned char*)(image3.ptr(0)), image3.cols, image3.rows, (int)image3.step);
 
+        RNU_TEST;
         //print the detection results
         for(i = 0; i < (pResults ? *pResults : 0); i++)
         {
@@ -120,7 +136,7 @@ void DetectThread::run()
 
             mCt->setDetRect(x,y,w,h);
 
-
+#if 0
             printf("ROI X %d Y %d W %d H %d\n",x,y,w,h);
             if (((x+w) > image1.cols) || ((y+h) > image1.rows) || (x<0) || (y<0))
                 continue;
@@ -141,7 +157,7 @@ void DetectThread::run()
             //FR->run();
             //FR->deleteLater();
 
-
+#endif
 
         }
 

@@ -83,10 +83,7 @@ void FaceRegRequest::run()
 
     DeleteFileOrFolder(QString(filename));
 
-
-    QMetaObject::invokeMethod(mw,"tipmsg",Q_ARG(QString,QString("SUCCESS :").append(QString::number(time_consuming_print("detect time",&gTpstart,&gTpend)))));
-
-
+    QMetaObject::invokeMethod(mw,"tipmsg",Q_ARG(QString,QString((char*)mCOMMUNICTION.resp).append(QString::number(time_consuming_print("detect time",&gTpstart,&gTpend)))));
 
 
 }

@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include <QGraphicsView>
 #include <QGraphicsProxyWidget>
+#include <QDebug>
 
 
 int main(int argc, char *argv[])
@@ -26,6 +27,10 @@ int main(int argc, char *argv[])
     view.resize(240, 320);
     view.show();
     view.rotate(90);
+#endif
+
+#ifdef x84_64
+    qDebug() << "x84_64x84_64x84_64x84_64x84_64x84_64x84_64x84_64x84_64x84_64x84_64";
 #endif
 
     QApplication::setOverrideCursor(Qt::BlankCursor);
