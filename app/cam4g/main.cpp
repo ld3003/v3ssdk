@@ -49,6 +49,8 @@
 #include "error-log.h"
 #include "saveppic.h"
 #include "pushpic.h"
+#include "network.h"
+#include "common.h"
 
 pthread_t write_tid; /**< write thread */
 pthread_t read_tid;  /**< read thread */
@@ -144,7 +146,7 @@ void *read_port_thread(void *argc)
             printf("[%s]\n", tmp);
             process_recv_serialport(fd);
         }
-        
+
         //sleep(1);
         printf("READ:\n");
         if (num < 0)
@@ -196,6 +198,15 @@ int main(int argc, char *argv[])
     int fd;
     int ret;
     char dev_name[32] = {0};
+
+    char tb[128];
+    if (net_detect("eth1") >= 0)
+    {
+        //如果网卡未激活，则激活并配置网卡
+        net_up("eth1");
+        SetIfAddr("eth1", "192.168.0.100", "255.255.255.0", "192.168.0.1");
+        mySystem("setprop net.dns1 114.114.114.114");
+    }
 
     opencam();
 
