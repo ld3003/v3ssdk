@@ -28,7 +28,7 @@ using namespace cv;
 #endif
 
 #ifdef arm
-#define USE_LIBDET
+#define USE_MTCNN
 #define RESET_VAL 4
 #endif
 
@@ -78,15 +78,12 @@ void DetectThread::run()
         if (finalBbox.size() == 1)
         {
 
-            int x = finalBbox[0].x1;
-            int y = finalBbox[0].y1;
-            int w = finalBbox[0].x2 - finalBbox[0].x1 + 1;
-            int h = finalBbox[0].y2 - finalBbox[0].y1;
+            int x = finalBbox[0].x1*RESET_VAL;
+            int y = finalBbox[0].y1*RESET_VAL;
+            int w = (finalBbox[0].x2 - finalBbox[0].x1)*RESET_VAL;
+            int h = (finalBbox[0].y2 - finalBbox[0].y1)*RESET_VAL;
 
-            mCt->setDetRect(x*RESET_VAL,y*RESET_VAL,w*RESET_VAL,h*RESET_VAL);
-
-
-            //
+            mCt->setDetRect(x,y,w,h);
 
             printf("ROI X %d Y %d W %d H %d\n",x,y,w,h);
             if (((x+w) > image1.cols) || ((y+h) > image1.rows) || (x<0) || (y<0))

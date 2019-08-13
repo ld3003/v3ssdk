@@ -68,6 +68,7 @@ else()
         add_definitions(-D__ARM_NEON)
         add_definitions(-D__ANDROID__)
     endif()
+    add_compile_options(-O3)
     add_definitions(-mfpu=neon)
     add_definitions(-mfloat-abi=hard)
 

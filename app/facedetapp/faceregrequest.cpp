@@ -49,7 +49,7 @@ FaceRegRequest::FaceRegRequest(Mat face)
 {
     mFace = face;
     communiction_init(&mCOMMUNICTION);
-    qDebug() << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@";
+    //qDebug() << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@";
 }
 
 FaceRegRequest::~FaceRegRequest()
@@ -81,7 +81,7 @@ void FaceRegRequest::run()
     pic.path = (nh_u8*)filename;
     communiction_pushpic(&mCOMMUNICTION,&pic,&resu);
 
-    DeleteFileOrFolder(QString(filename));
+    //DeleteFileOrFolder(QString(filename));
 
     QMetaObject::invokeMethod(mw,"tipmsg",Q_ARG(QString,QString((char*)mCOMMUNICTION.resp).append(QString::number(time_consuming_print("detect time",&gTpstart,&gTpend)))));
 
