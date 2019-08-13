@@ -19,8 +19,12 @@ extern "C" {
 
 #define DEV_WINDOWS_W       272
 #define DEV_WINDOWS_H       480
+#ifdef arm
+#define ETH_NAME            "eth0"
+#endif
+#ifdef x86_64
 #define ETH_NAME            "enp0s3"
-
+#endif
 
 
 int get_mac(char * mac, int len_limit , long long *devid , char *ethname);

@@ -18,9 +18,19 @@
 using namespace std;
 using namespace cv;
 
-#define RESET_VAL 1
+
 #define DETECT_BUFFER_SIZE 0x20000
+
+
+#ifdef x86_64
 #define USE_MTCNN
+#define RESET_VAL 1
+#endif
+
+#ifdef arm
+#define USE_LIBDET
+#define RESET_VAL 4
+#endif
 
 #define RNU_TEST printf("RUN-TEST %s : %d \n",__FILE__,__LINE__);
 
@@ -109,20 +119,14 @@ void DetectThread::run()
 #ifdef USE_LIBDET
 
 
-
-
-
-        RNU_TEST;
-
         cv::resize(image1, image3, cv::Size(image1.cols/RESET_VAL, image1.rows/RESET_VAL),0,0);
-        RNU_TEST;
+
         struct timeval gTpstart ,gTpend;
         time_consuming_start(&gTpstart,&gTpend);
-        RNU_TEST;
-        //time_consuming_print("detect time",&gTpstart,&gTpend);
+
         pResults = facedetect_cnn(pBuffer, (unsigned char*)(image3.ptr(0)), image3.cols, image3.rows, (int)image3.step);
 
-        RNU_TEST;
+
         //print the detection results
         for(i = 0; i < (pResults ? *pResults : 0); i++)
         {
@@ -136,7 +140,7 @@ void DetectThread::run()
 
             mCt->setDetRect(x,y,w,h);
 
-#if 0
+#if 1
             printf("ROI X %d Y %d W %d H %d\n",x,y,w,h);
             if (((x+w) > image1.cols) || ((y+h) > image1.rows) || (x<0) || (y<0))
                 continue;
@@ -153,12 +157,7 @@ void DetectThread::run()
                 }
                 tp.start(FR);
             }
-
-            //FR->run();
-            //FR->deleteLater();
-
 #endif
-
         }
 
         time_consuming_print("detect time",&gTpstart,&gTpend);

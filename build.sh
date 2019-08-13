@@ -168,7 +168,6 @@ function build_demos()
 
 	cd $APP_DIR/demo-camera/
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} demo-camera
-	
 
 	cd $APP_DIR/gpio/
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}

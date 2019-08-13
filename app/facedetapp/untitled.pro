@@ -37,6 +37,7 @@ SOURCES += \
         Communiction/Communiction.c \
         cJSON.c \
         faceregrequest.cpp \
+        gpio.c \
         main.cpp \
         mainwindow.cpp \
         camthread.cpp \
@@ -48,6 +49,7 @@ HEADERS += \
         Communiction/Communiction.h \
         cJSON.h \
         faceregrequest.h \
+        gpio.h \
         mainwindow.h \
         camthread.h \
         detectthread.h \

@@ -83,8 +83,8 @@ void MainWindow::tipmsgTimeout()
 
 void MainWindow::syschecktimeout()
 {
-    char mac[32];
-    char ip[16];
+    char mac[32] = "";
+    char ip[16] = "";
 
     long long devid;
     get_local_ip(ETH_NAME,ip);
