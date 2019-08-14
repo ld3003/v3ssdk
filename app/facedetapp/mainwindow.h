@@ -34,6 +34,7 @@ public slots:
     void tipmsg(QString);
     void tipmsgTimeout();
     void syschecktimeout();
+    void openDoor();
 
 private:
     Ui::MainWindow *ui;

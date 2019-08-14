@@ -62,15 +62,12 @@ void CamThread::run()
         //time_consuming_print("fetch img time 2",&gTpstart,&gTpend);
 
         cv::cvtColor(mImageData1, tmppic, CV_BGR2RGB);
-        //tmppic = mImageData1;
-
-        //time_consuming_print("fetch img time 3",&gTpstart,&gTpend);
 
         mDetlocker.lock();
-        rectangle(tmppic, cv::Rect(mDetRect[0]/RESIZE_VAL, mDetRect[1]/RESIZE_VAL, mDetRect[2]/RESIZE_VAL, mDetRect[3]/RESIZE_VAL), cv::Scalar(0, 255, 0), 2);
+        if (mDetRect[2] != 0)
+            rectangle(tmppic, cv::Rect(mDetRect[0]/RESIZE_VAL, mDetRect[1]/RESIZE_VAL, mDetRect[2]/RESIZE_VAL, mDetRect[3]/RESIZE_VAL), cv::Scalar(0, 255, 0), 2);
+        mDetRect[2] = 0;
         mDetlocker.unlock();
-
-
 
         Img = QImage((const uchar*)(tmppic.data), tmppic.cols, tmppic.rows, tmppic.cols * tmppic.channels(), QImage::Format_RGB888);
         emit imgReady(Img);

@@ -6,40 +6,16 @@
 #include <stdio.h>
 #include <curl/curl.h>
 
-#define  REQURL "http://39.98.235.120:18080/rest/face/faceDevice/distinguish"
-
+//#define  REQURL "http://39.98.235.120:18080/rest/face/faceDevice/distinguish"
+#define REQURL "http://182.61.60.162:9080/rest/checkFace"
 static unsigned char reqbuffer[512];
 
-
-void json_2_data(char * in_json)
-{
-    cJSON * pSub;
-    cJSON * pJson;
-    //printf("json_2_data success 2222222222222222@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-    if(NULL == in_json){return;}
-    pJson = cJSON_Parse(in_json);
-    if(NULL == pJson){return;}
-
-    printf("json_2_data success \n");
-
-    pSub = cJSON_GetObjectItem(pJson, "MESSAGE");
-    if(NULL != pSub)
-    {
-        printf("MESSAGE:%s\n", pSub->valuestring);
-    }
-
-    cJSON_Delete(pJson);
-
-    return ;
-    //
-}
-
-
+//7E010100003200000000000000000000000000000000000000000D
 
 
 size_t  write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
 
-    printf("\n\n\n[%s]\n\n\n\n",ptr);
+    printf("\n\n\nHTTP[%s]\n\n\n\n",ptr);
     snprintf(reqbuffer,sizeof(reqbuffer),"%s",ptr,nmemb);
     return nmemb;
 }
@@ -65,8 +41,13 @@ NH_ERRCODE communiction_pushpic(COMMUNICTION *comm, PICTURE *pic, COMMUNICTION_R
     struct curl_httppost *post = NULL;
     struct curl_httppost *last = NULL;
 
+    reqbuffer[0] = 0;
+    result->resp[0] = 0;
+
 
     get_mac(mac,sizeof(mac),&devid,ETH_NAME);
+
+
 
 
     curl_formadd(&post, &last, CURLFORM_COPYNAME, "busiDeviceId",
@@ -94,51 +75,55 @@ NH_ERRCODE communiction_pushpic(COMMUNICTION *comm, PICTURE *pic, COMMUNICTION_R
         if (res != CURLE_OK)
         {
             printf("curl_easy_perform() failed，error code is:%s\n", curl_easy_strerror(res));
+            snprintf(result->resp,512,"%s",curl_easy_strerror(res));
+        }else {
+
+
+            if (strstr(reqbuffer,"{\""))
+            {
+
+                char *in_json = strstr(reqbuffer,"{\"");
+                cJSON * pSub;
+                cJSON * pJson;
+
+                if(NULL != in_json){
+
+                    pJson = cJSON_Parse(in_json);
+                    if(NULL != pJson){
+
+                        pSub = cJSON_GetObjectItem(pJson, "message");
+                        if(NULL != pSub)
+                        {
+                            printf("MESSAGE:%s\n", pSub->valuestring);
+                            snprintf(result->resp,512,"%s",pSub->valuestring);
+
+                        }
+
+
+                        pSub = cJSON_GetObjectItem(pJson, "code");
+                        if(NULL != pSub)
+                        {
+                            printf("CODE:%d\n", pSub->valueint);
+                            result->code = pSub->valueint;
+
+                        }
+
+
+                        cJSON_Delete(pJson);
+                    }
+                }
+
+
+            }
+
         }
 
 
         curl_easy_cleanup(pCurl);
 
-        //printf("%s\n",reqbuffer);
 
     }
 
-    snprintf(comm->resp,512,"%s",reqbuffer);
-
-    return NH_ERR_NOERR;
-
-    if (strstr(reqbuffer,"MESSAGE"))
-    {
-
-        char *in_json = strstr(reqbuffer,"MESSAGE");
-        cJSON * pSub;
-        cJSON * pJson;
-        //printf("json_2_data success 2222222222222222@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-        if(NULL == in_json){
-            goto err;
-        }
-        pJson = cJSON_Parse(in_json);
-        if(NULL == pJson){
-            goto err;
-        }
-
-        printf("json_2_data success \n");
-
-        pSub = cJSON_GetObjectItem(pJson, "MESSAGE");
-        if(NULL != pSub)
-        {
-            printf("MESSAGE:%s\n", pSub->valuestring);
-            snprintf(comm->resp,512,"%s",pSub->valuestring);
-
-        }
-
-        cJSON_Delete(pJson);
-
-
-        //json_2_data(reqbuffer);
-    }
-
-    err:
 
 
     return NH_ERR_NOERR;

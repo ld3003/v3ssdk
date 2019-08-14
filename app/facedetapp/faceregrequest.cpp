@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QMetaObject>
 #include "mainwindow.h"
+#include <QApplication>
 
 using namespace std;
 using namespace cv;
@@ -49,12 +50,11 @@ FaceRegRequest::FaceRegRequest(Mat face)
 {
     mFace = face;
     communiction_init(&mCOMMUNICTION);
-    //qDebug() << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@";
+
 }
 
 FaceRegRequest::~FaceRegRequest()
 {
-    qDebug() << "FaceRegRequestFaceRegRequestFaceRegRequestFaceRegRequestFaceRegRequestFaceRegRequestFaceRegRequest";
 }
 
 void FaceRegRequest::setFace(cv::Mat face)
@@ -64,8 +64,6 @@ void FaceRegRequest::setFace(cv::Mat face)
 void FaceRegRequest::run()
 {
     char filename[64];
-
-
 
     struct timeval gTpstart ,gTpend;
     time_consuming_start(&gTpstart,&gTpend);
@@ -81,9 +79,8 @@ void FaceRegRequest::run()
     pic.path = (nh_u8*)filename;
     communiction_pushpic(&mCOMMUNICTION,&pic,&resu);
 
-    //DeleteFileOrFolder(QString(filename));
+    DeleteFileOrFolder(QString(filename));
 
-    QMetaObject::invokeMethod(mw,"tipmsg",Q_ARG(QString,QString((char*)mCOMMUNICTION.resp).append(QString::number(time_consuming_print("detect time",&gTpstart,&gTpend)))));
-
+    QMetaObject::invokeMethod(mw,"tipmsg",Q_ARG(QString,QString((char*)resu.resp)));
 
 }

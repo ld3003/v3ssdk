@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QPixmap>
 #include <QTextFormat>
+#include "gpio.h"
 
 
 MainWindow *mw;
@@ -40,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tipLable->hide();
 
     QFont ft;
-    ft.setPointSize(24);
+    ft.setPointSize(18);
     tipLable->setFont(ft);
     QPalette pa;
     pa.setColor(QPalette::WindowText,Qt::red);
@@ -55,6 +56,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(syschecktimer,SIGNAL(timeout()),this,SLOT(syschecktimeout()));
 
     syschecktimer->start(1000);
+
+    GPIO_Init();
+    GPIO_ConfigPin(PG,0,OUT);
 
 
 }
@@ -75,6 +79,7 @@ void MainWindow::tipmsg(QString str)
     //tipLable->setTextFormat()
     //
     tipMsgtimer->start(1000);
+
 }
 void MainWindow::tipmsgTimeout()
 {
@@ -94,6 +99,11 @@ void MainWindow::syschecktimeout()
                                                                               .append("NETSTATUS:").append(QString(net_detect(ETH_NAME)).append("\n"))
 
                                                                               )));
+
+}
+
+void MainWindow::openDoor()
+{
 
 }
 

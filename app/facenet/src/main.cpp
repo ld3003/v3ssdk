@@ -298,7 +298,7 @@ cv::Mat mtcnn(char *samplejpg)
 
 int main()
 {
-    char *model_path = "./models";
+    char *model_path = "./";
 
     cv::Mat img1 = mtcnn("./zp/ld3.jpg");
     cv::Mat img2 = mtcnn("./zp/ld2.jpg");
@@ -309,8 +309,11 @@ int main()
     std::vector<float> feature2;
 
     clock_t start_time = clock();
+xx:
+    printf("xx\n");
     recognize.start(img1, feature1);
     recognize.start(img2, feature2);
+    goto xx;
     double similar = calculSimilar(feature1, feature2);
     clock_t finish_time = clock();
     double total_time = (double)(finish_time - start_time) / CLOCKS_PER_SEC;

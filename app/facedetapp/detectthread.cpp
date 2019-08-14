@@ -85,12 +85,14 @@ void DetectThread::run()
 
             mCt->setDetRect(x,y,w,h);
 
-            printf("ROI X %d Y %d W %d H %d\n",x,y,w,h);
             if (((x+w) > image1.cols) || ((y+h) > image1.rows) || (x<0) || (y<0))
                 continue;
 
             Rect rect(x, y, w, h);
             image_roi = image1(rect);
+            //image_roi = image1;
+
+
 
             if (tp.activeThreadCount() < 1 )
             {
@@ -100,6 +102,7 @@ void DetectThread::run()
                     FR->setAutoDelete(true);
                 }
                 tp.start(FR);
+            }else{
             }
 
             //FR->run();

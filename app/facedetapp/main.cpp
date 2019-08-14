@@ -7,13 +7,14 @@
 #include <QDebug>
 #include "Common/Common.h"
 
+#include "gpio.h"
+
 
 int main(int argc, char *argv[])
 {
 
 
     QApplication a(argc, argv);
-
     MainWindow w;
 
 
@@ -30,11 +31,10 @@ int main(int argc, char *argv[])
     view.rotate(90);
 #endif
 
-#ifdef x84_64
+#ifdef x86_64
     w.show();
 #endif
 
     QApplication::setOverrideCursor(Qt::BlankCursor);
-
     return a.exec();
 }
