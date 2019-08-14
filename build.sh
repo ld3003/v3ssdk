@@ -166,49 +166,75 @@ function build_library()
 function build_demos()
 {
 
+	
 	cd $APP_DIR/demo-camera/
+	echo "*****************************************"
+	pwd
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} demo-camera
+	
 
 	cd $APP_DIR/gpio/
+	echo "*****************************************"
+	pwd
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
 
 	cd $APP_DIR/demo-codec/
+	echo "*****************************************"
+	pwd
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
 
 	cd $APP_DIR/demo-qt
+	echo "*****************************************"
+	pwd
   	$TOP_DIR/buildroot/out/host/bin/qmake
 	make -j${logicalNumber}
 
 	cd $APP_DIR/opencv
+	echo "*****************************************"
+	pwd
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} test
 
 	cd $APP_DIR/curl
+	echo "*****************************************"
+	pwd
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} test
 
 
 	cd $APP_DIR/cam4g
+	echo "*****************************************"
+	pwd
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
 
+	cd $APP_DIR/opencv2fb
+	echo "*****************************************"
+	pwd
+	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
+
+
 	cd $APP_DIR/serialport_linux/src
+	echo "*****************************************"
+	pwd
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} 
 
 	cd $APP_DIR/facedetapp
+	echo "*****************************************"
+	pwd
   	$TOP_DIR/buildroot/out/host/bin/qmake
 	make -j${logicalNumber}
 
 	cd $APP_DIR/qrcode
+	echo "*****************************************"
+	pwd
   	$TOP_DIR/buildroot/out/host/bin/qmake
 	make -j${logicalNumber}
 
 	cd $APP_DIR/facenet/
+	echo "*****************************************"
+	pwd
 	mkdir build
 	cd build
 	cmake ../
 	make -j${logicalNumber}
-
-	cd $APP_DIR/demo-codec/
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
-
 }
 
 function clean_demos()
