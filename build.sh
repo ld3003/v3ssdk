@@ -211,6 +211,13 @@ function build_demos()
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
 
 
+	cd $APP_DIR/facedetectapp
+	echo "*****************************************"
+	pwd
+	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
+
+
+
 	cd $APP_DIR/serialport_linux/src
 	echo "*****************************************"
 	pwd

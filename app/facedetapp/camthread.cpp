@@ -19,6 +19,13 @@ CamThread::CamThread(QObject *obj)
 {
 
     //GPIO_Init();
+}
+
+
+void CamThread::run()
+{
+    QImage Img;
+    cv::Mat tmppic0,tmppic;
 
     mCap = new cv::VideoCapture(0);
 
@@ -31,13 +38,7 @@ CamThread::CamThread(QObject *obj)
         qDebug() << "opencamera error" ;
     }
 
-}
 
-
-void CamThread::run()
-{
-    QImage Img;
-    cv::Mat tmppic0,tmppic;
 
     for(;;)
     {

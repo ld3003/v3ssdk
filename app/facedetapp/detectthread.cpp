@@ -72,9 +72,9 @@ void DetectThread::run()
         ncnn::Mat ncnn_img = ncnn::Mat::from_pixels(image3.data, ncnn::Mat::PIXEL_BGR2RGB, image3.cols, image3.rows);
 
         struct timeval gTpstart ,gTpend;
-        time_consuming_start(&gTpstart,&gTpend);
+        //time_consuming_start(&gTpstart,&gTpend);
         mtcnn->detectMaxFace(ncnn_img, finalBbox);
-        time_consuming_print("detect time",&gTpstart,&gTpend);
+        //time_consuming_print("detect time",&gTpstart,&gTpend);
         if (finalBbox.size() == 1)
         {
 

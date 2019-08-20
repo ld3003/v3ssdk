@@ -59,6 +59,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     GPIO_Init();
     GPIO_ConfigPin(PG,0,OUT);
+    GPIO_ConfigPin(PB,0,OUT);
+    GPIO_ConfigPin(PB,1,OUT);
+    GPIO_ConfigPin(PB,2,OUT);
+    GPIO_SetPin(PB,0,1);
+    GPIO_SetPin(PB,1,1);
+    GPIO_SetPin(PB,2,1);
+    a = 0;
 
 
 }
@@ -79,6 +86,11 @@ void MainWindow::tipmsg(QString str)
     //tipLable->setTextFormat()
     //
     tipMsgtimer->start(1000);
+
+    if (str.contains("SUCCESS"))
+    {
+        GPIO_SetPin(PG,0,a=~a);
+    }
 
 }
 void MainWindow::tipmsgTimeout()

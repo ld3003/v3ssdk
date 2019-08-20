@@ -6,7 +6,9 @@
 #include <stdio.h>
 #include <curl/curl.h>
 
-//#define  REQURL "http://39.98.235.120:18080/rest/face/faceDevice/distinguish"
+static unsigned char reqflag = 0;
+
+#define  REQURL2 "http://39.98.235.120:18080/rest/face/faceDevice/distinguish"
 #define REQURL "http://182.61.60.162:9080/rest/checkFace"
 static unsigned char reqbuffer[512];
 
@@ -35,6 +37,11 @@ NH_ERRCODE communiction_pushpic(COMMUNICTION *comm, PICTURE *pic, COMMUNICTION_R
     char *url= REQURL;
     CURL *pCurl = NULL;
     CURLcode res;
+
+    if (reqflag == 1)
+	    url = REQURL2;
+
+    printf("REQURL : %s \n",url);
 
     struct curl_slist *headerlist = NULL;
 
@@ -100,13 +107,20 @@ NH_ERRCODE communiction_pushpic(COMMUNICTION *comm, PICTURE *pic, COMMUNICTION_R
                         }
 
 
+
                         pSub = cJSON_GetObjectItem(pJson, "code");
                         if(NULL != pSub)
                         {
                             printf("CODE:%d\n", pSub->valueint);
                             result->code = pSub->valueint;
+			    if (result->code == 200)
+			    {
+				    reqflag = 1;
+			    }
 
                         }
+
+
 
 
                         cJSON_Delete(pJson);

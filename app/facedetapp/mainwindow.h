@@ -46,6 +46,8 @@ private:
     QTimer *tipMsgtimer;
     QTimer *syschecktimer;
 
+    int a;
+
 
 };
 
