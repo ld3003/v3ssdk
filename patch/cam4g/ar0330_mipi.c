@@ -769,8 +769,8 @@ static struct sensor_win_size sensor_win_sizes[] = {
     },
     /* 720P */
     {
-        .width	    = HD720_WIDTH,
-        .height 	= HD720_HEIGHT,
+        .width	    =HD720_WIDTH,
+        .height     = HD720_HEIGHT,
         .hoffset    = 0,
         .voffset    = 0,
         .hts        = 1248,
@@ -835,28 +835,30 @@ static struct sensor_win_size sensor_win_sizes[] = {
 //        .set_size   = NULL,
 //    },
 //    
-//    /* VGA */
-//    {
-//        .width	    = VGA_WIDTH,
-//        .height 	= VGA_HEIGHT,
-//        .hoffset    = 288,
-//        .voffset    = 120,
-//        .hts        = 1248,
-//        .vts        = 1308,
-//        .pclk       = 49*1000*1000,
-//        .mipi_bps   = (588*1000*1000)/1,
-//        .fps_fixed  = 1,
-//        .bin_factor = 1,
-//        .intg_min   = 1<<4,
-//        .intg_max   = 1308<<4,//
-//        .gain_min   = 1<<4,
-//        .gain_max   = 16<<4,
-//        .width_input = 1728,
-//        .height_input = 1296,
-//        .regs       = sensor_default_regs,
-//        .regs_size  = ARRAY_SIZE(sensor_default_regs),
-//        .set_size   = NULL,
-//    },
+    /* VGA */
+    /*
+    {
+        .width	    = VGA_WIDTH,
+        .height 	= VGA_HEIGHT,
+        .hoffset    = 288,
+        .voffset    = 120,
+        .hts        = 1248,
+        .vts        = 1308,
+        .pclk       = 49*1000*1000,
+        .mipi_bps   = (588*1000*1000)/1,
+        .fps_fixed  = 1,
+        .bin_factor = 1,
+        .intg_min   = 1<<4,
+        .intg_max   = 1308<<4,//
+        .gain_min   = 1<<4,
+        .gain_max   = 16<<4,
+        .width_input = 1728,
+        .height_input = 1296,
+        .regs       = sensor_default_regs,
+        .regs_size  = ARRAY_SIZE(sensor_default_regs),
+        .set_size   = NULL,
+    },
+    */
 };
 
 #define N_WIN_SIZES (ARRAY_SIZE(sensor_win_sizes))

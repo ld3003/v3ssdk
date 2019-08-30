@@ -51,16 +51,43 @@
 #include "pushpic.h"
 #include "network.h"
 #include "common.h"
+#include <curl/curl.h>
 
 pthread_t write_tid; /**< write thread */
 pthread_t read_tid;  /**< read thread */
 pthread_t exit_tid;  /**< exit thread */
+pthread_t netcheck_tid;
+pthread_t getcamera_tid;
+
+int vol = 0;
+int csq = 0;
+float jd = 0;
+float wd = 0;
+
 
 /** The data we write to the port. */
 //char *buf = "Are you going to die?\r\n";
 char *buf = "Are you going to die? To be or not to be, that is the question.\r\n";
 /** data we receive */
 char tmp[512];
+
+static void split(char *src, const char *separator, char **dest, int *num)
+{
+    char *pNext;
+    int count = 0;
+    if (src == NULL || strlen(src) == 0)
+        return;
+    if (separator == NULL || strlen(separator) == 0)
+        return;
+    pNext = strtok(src, separator);
+    while (pNext != NULL)
+    {
+        *dest++ = pNext;
+        ++count;
+        pNext = strtok(NULL, separator);
+    }
+    *num = count;
+}
 
 static void process_recv_serialport(int fd)
 {
@@ -80,15 +107,63 @@ static void process_recv_serialport(int fd)
     }
     else if (strstr(tmp, "AT+PUSHPIC"))
     {
-        pushpic();
-        snprintf(tmp, sizeof(tmp), "ERROR NOPIC");
+        char *buf = tmp;
+
+        //用来接收返回数据的数组。这里的数组元素只要设置的比分割后的子字符串个数大就好了。
+        char *revbuf[128] = {0};
+        char *p;
+
+        for(int i=0;i<strlen(buf);i++)
+        {
+                if (buf[i] == '=')
+                        buf[i] = ',';
+                if (buf[i] == '\r')
+                        buf[i] = ',';
+        }
+
+        //分割后子字符串的个数
+        int num = 0;
+
+        split(buf,",",revbuf,&num);
+        for (int i = 0; i < num; i++)
+        {
+                printf("[%s]\n", revbuf[i]);
+        }
+
+	if (num >= 4)
+	{
+		sscanf(revbuf[1],"%d",&vol);
+		sscanf(revbuf[2],"%d",&csq);
+		sscanf(revbuf[3],"%f",&jd);
+		sscanf(revbuf[4],"%f",&wd);
+
+
+		printf("!!!!!!!! %d %d %f %f \n",vol,csq,jd,wd);
+
+	}
+
+
+	int ret = pushpic();
+	if (ret == 0)
+	{
+		if (next_request_time < 30758400)
+                snprintf(tmp, sizeof(tmp), "OK=%d\r\n", next_request_time);
+            else
+
+                snprintf(tmp, sizeof(tmp), "ERROR TIMEERR%d\r\n", next_request_time);
+        }
+        else
+        {
+            snprintf(tmp, sizeof(tmp), "ERROR %s\r\n", curl_easy_strerror((CURLcode)ret));
+        }
+
+        printf("ATECHO @ %s \n", tmp);
+
         write(fd, tmp, strlen(tmp));
     }
-    else if (strstr(tmp, "AT+AUTO"))
+    else if (strstr(tmp, "AT\r\n"))
     {
-        getpic();
-        pushpic();
-        snprintf(tmp, sizeof(tmp), "ERROR NOPIC");
+        snprintf(tmp, sizeof(tmp), "OK\r\n");
         write(fd, tmp, strlen(tmp));
     }
 }
@@ -125,6 +200,14 @@ void *write_port_thread(void *argc)
     pthread_exit(NULL);
 }
 
+void *getpic_thread(void *argc)
+{
+    for (;;)
+    {
+        getpic2();
+    }
+}
+
 /** 
  * read_port_thread - Thread that reads data from the port
  * 
@@ -147,12 +230,30 @@ void *read_port_thread(void *argc)
             process_recv_serialport(fd);
         }
 
-        //sleep(1);
-        printf("READ:\n");
         if (num < 0)
             pthread_exit(NULL);
     }
     pthread_exit(NULL);
+}
+
+void *netcheck_thread(void *argc)
+{
+    int num;
+    int fd;
+    for (;;)
+    {
+#if 1
+        if (net_detect("eth1") >= 0)
+        {
+            //如果网卡未激活，则激活并配置网卡
+            net_up("eth1");
+            SetIfAddr("eth1", "192.168.0.100", "255.255.255.0", "192.168.0.1");
+            //mySystem("setprop net.dns1 114.114.114.114");
+        }
+#endif
+
+        sleep(1);
+    }
 }
 
 /** 
@@ -193,6 +294,9 @@ void *exit_thread(void *argc)
  * main - main function
  * 
  */
+
+#define RUN_TEST printf("RUN_TEST #################33 %s : %d \n",__FILE__,__LINE__);
+
 int main(int argc, char *argv[])
 {
     int fd;
@@ -200,21 +304,19 @@ int main(int argc, char *argv[])
     char dev_name[32] = {0};
 
     char tb[128];
-    if (net_detect("eth1") >= 0)
-    {
-        //如果网卡未激活，则激活并配置网卡
-        net_up("eth1");
-        SetIfAddr("eth1", "192.168.0.100", "255.255.255.0", "192.168.0.1");
-        mySystem("setprop net.dns1 114.114.114.114");
-    }
+
+    RUN_TEST;
 
     opencam();
 
+    RUN_TEST;
     strcpy(dev_name, "/dev/ttyS2");
     if (argc == 2)
     {
         sprintf(dev_name, "%s", argv[1]);
     }
+
+    RUN_TEST;
 
     //signal(SIGINT, sig_handle);
     fd = open_port(dev_name); /* open the port */
@@ -223,7 +325,7 @@ int main(int argc, char *argv[])
         printf("open %s err\n", dev_name);
         exit(0);
     }
-
+    RUN_TEST;
     ret = setup_port(fd, 115200, 8, 'N', 1); /* setup the port */
     if (ret < 0)
         exit(0);
@@ -233,9 +335,18 @@ int main(int argc, char *argv[])
     if (ret < 0)
         unix_error_exit("Create write thread error.");
 #endif
+
     ret = pthread_create(&read_tid, NULL, read_port_thread, (void *)fd);
     if (ret < 0)
         unix_error_exit("Create read thread error.");
+    RUN_TEST;
+    ret = pthread_create(&netcheck_tid, NULL, netcheck_thread, (void *)fd);
+    if (ret < 0)
+        unix_error_exit("Create netcheck thread error.");
+    RUN_TEST;
+    ret = pthread_create(&getcamera_tid, NULL, getpic_thread, (void *)fd);
+    if (ret < 0)
+        unix_error_exit("Create netcheck thread error.");
 
 #if 0
     ret = pthread_create(&exit_tid, NULL, exit_thread, NULL);
@@ -244,10 +355,13 @@ int main(int argc, char *argv[])
 #endif
 
     //pthread_join(write_tid, NULL);
-    pthread_join(read_tid, NULL);
+    //pthread_join(read_tid, NULL);
     //pthread_join(exit_tid, NULL);
+    //
+    for(;;){
+	    sleep(1);
+    }
 
-    close_port(fd);
 
     return 0;
 }

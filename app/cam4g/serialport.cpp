@@ -73,9 +73,13 @@ int open_port(const char* device)
     ret = fcntl(fd, F_SETFL, 0);
     if (ret < 0)
         error_sys("fcntl");
+
+#if 0
     ret = isatty(STDIN_FILENO);
     if (ret == 0)
         error_sys("Standard input is not a terminal device.");
+#endif
+
     debug_msg("Open the port %s success!\n", device);
     
     return fd;

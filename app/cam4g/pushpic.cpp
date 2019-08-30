@@ -1,13 +1,16 @@
 #include <stdio.h>
 #include <curl/curl.h>
-//linker options: -lcurl -lcurldll
-static unsigned char reqbuffer[512];
+
+static char reqbuffer[512];
 
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include <string.h>
+#include <cJSON.h>
+
+int next_request_time = 30758400;
 
 int get_mac(char *mac, int len_limit, long long *devid, char *ethname)
 {
@@ -50,19 +53,36 @@ int get_mac(char *mac, int len_limit, long long *devid, char *ethname)
 size_t write_data(void *buff, size_t size, size_t nmemb, FILE *fp)
 {
 	//回调函数，下载的数据通过这里写入本地文件
-	fwrite(buff, size, nmemb, fp);
+	//fwrite(buff, size, nmemb, fp);
+	snprintf(reqbuffer,sizeof(reqbuffer),"%s",buff,nmemb);
 	return size * nmemb;
 }
 
 #define REQURL "http://demo.zxhtong.com/camera_upload.html"
 
+
+extern int vol;
+extern int csq;
+extern float jd;
+extern float wd;
+
+
+
+
 int pushpic()
 {
+	int run_count = 0;
 	char mac[32];
 	long long devid;
 	char *url = REQURL;
 	CURL *pCurl = NULL;
 	CURLcode res;
+	char tmpstr[32];
+	char tmpstr2[32];
+
+
+
+	next_request_time = 30758400;
 
 	struct curl_slist *headerlist = NULL;
 
@@ -71,12 +91,14 @@ int pushpic()
 
 	get_mac(mac, sizeof(mac), &devid, "eth0");
 
+	snprintf(tmpstr,sizeof(tmpstr),"%d",vol);
 	curl_formadd(&post, &last, CURLFORM_COPYNAME, "BATVOL",
-				 CURLFORM_COPYCONTENTS, "3.7",
+				 CURLFORM_COPYCONTENTS, tmpstr,
 				 CURLFORM_END);
 
+	snprintf(tmpstr2,sizeof(tmpstr2),"%d",csq);
 	curl_formadd(&post, &last, CURLFORM_COPYNAME, "SIG",
-				 CURLFORM_COPYCONTENTS, "27",
+				 CURLFORM_COPYCONTENTS, tmpstr2,
 				 CURLFORM_END);
 
 	curl_formadd(&post, &last, CURLFORM_COPYNAME, "DEVID",
@@ -92,24 +114,62 @@ int pushpic()
 
 	if (NULL != pCurl)
 	{
-		curl_easy_setopt(pCurl, CURLOPT_TIMEOUT, 5);
+		curl_easy_setopt(pCurl, CURLOPT_TIMEOUT, 3);
 		curl_easy_setopt(pCurl, CURLOPT_URL, url);
 		curl_easy_setopt(pCurl, CURLOPT_HTTPPOST, post);
+		curl_easy_setopt(pCurl, CURLOPT_WRITEFUNCTION, write_data);
 
-		//curl_easy_setopt(pCurl, CURLOPT_WRITEFUNCTION, write_data);
-
-		res = curl_easy_perform(pCurl);
-
-		if (res != CURLE_OK)
+		for (int i = 0; i < 3; i++)
 		{
-			printf("curl_easy_perform() failed，error code is:%s\n", curl_easy_strerror(res));
+			res = curl_easy_perform(pCurl);
+
+			if (res != CURLE_OK)
+			{
+				printf("curl_easy_perform() failed，error code is:%s\n", curl_easy_strerror(res));
+			}
+			else
+			{
+				if (strstr(reqbuffer, "{\""))
+				{
+
+					char *in_json = strstr(reqbuffer, "{\"");
+					cJSON *pSub;
+					cJSON *pJson;
+
+					if (NULL != in_json)
+					{
+
+						pJson = cJSON_Parse(in_json);
+						if (NULL != pJson)
+						{
+
+							pSub = cJSON_GetObjectItem(pJson, "message");
+							if (NULL != pSub)
+							{
+								printf("MESSAGE:%s\n", pSub->valuestring);
+							}
+
+							pSub = cJSON_GetObjectItem(pJson, "next_request_time");
+							if (NULL != pSub)
+							{
+								next_request_time = pSub->valueint;
+								printf("CODE:%d\n", pSub->valueint);
+							}
+
+							cJSON_Delete(pJson);
+						}
+					}
+				}
+			}
+			printf("\n");
+
+			curl_easy_cleanup(pCurl);
+
+			printf("%s\n", reqbuffer);
+
+			break;
 		}
-		printf("\n");
-
-		curl_easy_cleanup(pCurl);
-
-		printf("%s\n", reqbuffer);
 	}
 
-	return 0;
+	return res;
 }

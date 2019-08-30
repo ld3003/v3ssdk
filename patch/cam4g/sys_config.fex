@@ -422,7 +422,7 @@ cooler3 =  "648000 4 4294967295 0"
 ;lcd0_hue              (LCD hue, 0~100)
 ;----------------------------------------------------------------------------------
 [disp_init]
-disp_init_enable         = 0
+disp_init_enable         = 1
 disp_mode                = 0
 
 screen0_output_type      = 1
@@ -489,7 +489,7 @@ lcd1_hue                 = 50
 ;smart_color           90:normal lcd screen 65:retina lcd screen(9.7inch)
 ;----------------------------------------------------------------------------------
 [lcd0_para]
-lcd_used            = 0
+lcd_used            = 1
 lcd_driver_name     = "vs043con08v0"
 lcd_if              = 0
 lcd_x               = 480
@@ -676,7 +676,7 @@ vip_dev1_flash_mode      =
 vip_dev1_af_pwdn         =
 
 [csi1]
-vip_used                 = 1
+vip_used                 = 0
 vip_mode                 = 0
 vip_dev_qty              = 1
 vip_define_sensor_list   = 0
@@ -804,7 +804,7 @@ sdc_isio          = 0
 sdc_regulator     = "none"
 
 [mmc1_para]
-sdc_used          = 0
+sdc_used          = 1
 sdc_detmode       = 4
 sdc_buswidth      = 4
 sdc_clk           = port:PG00<2><1><1><default>

@@ -83,6 +83,7 @@ NH_ERRCODE communiction_pushpic(COMMUNICTION *comm, PICTURE *pic, COMMUNICTION_R
         {
             printf("curl_easy_perform() failed，error code is:%s\n", curl_easy_strerror(res));
             snprintf(result->resp,512,"%s",curl_easy_strerror(res));
+
         }else {
 
 
