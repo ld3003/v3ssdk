@@ -769,7 +769,7 @@ static struct sensor_win_size sensor_win_sizes[] = {
     },
     /* 720P */
     {
-        .width	    =HD720_WIDTH,
+        .width	    = HD720_WIDTH,
         .height     = HD720_HEIGHT,
         .hoffset    = 0,
         .voffset    = 0,

@@ -1,5 +1,8 @@
 #/bin/bash 
 
+CUR_DIR=`pwd`
+
+
 cd ../../
 
 physicalNumber=0
@@ -38,7 +41,6 @@ PACKTOOLS_DIR=$TOP_DIR/tools/pack
 ROOTFS_OVERRIDE_DIR=$TOP_DIR/prebuilt/rootfs-override
 APP_DIR=$TOP_DIR/app
 BR_CROSS_COMPILE=$BUILDROOT_OUT_DIR/host/usr/bin/arm-buildroot-linux-gnueabihf-
-
 
 
 copy_file_list=(
@@ -181,10 +183,10 @@ function build_demos()
 	pwd
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
 
-	cd $APP_DIR/demo-codec/
-	echo "*****************************************"
-	pwd
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
+	#cd $APP_DIR/demo-codec/
+	#echo "*****************************************"
+	#pwd
+	#make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
 
 	cd $APP_DIR/demo-qt
 	echo "*****************************************"

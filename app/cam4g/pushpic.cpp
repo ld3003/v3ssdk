@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <curl/curl.h>
 
-static char reqbuffer[512];
+char reqbuffer[512];
 
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -11,6 +11,7 @@ static char reqbuffer[512];
 #include <cJSON.h>
 
 int next_request_time = 30758400;
+char geturl[512];
 
 int get_mac(char *mac, int len_limit, long long *devid, char *ethname)
 {
@@ -114,7 +115,7 @@ int pushpic()
 
 	if (NULL != pCurl)
 	{
-		curl_easy_setopt(pCurl, CURLOPT_TIMEOUT, 3);
+		curl_easy_setopt(pCurl, CURLOPT_TIMEOUT, 10);
 		curl_easy_setopt(pCurl, CURLOPT_URL, url);
 		curl_easy_setopt(pCurl, CURLOPT_HTTPPOST, post);
 		curl_easy_setopt(pCurl, CURLOPT_WRITEFUNCTION, write_data);
@@ -155,6 +156,9 @@ int pushpic()
 								next_request_time = pSub->valueint;
 								printf("CODE:%d\n", pSub->valueint);
 							}
+
+
+							//geturl
 
 							cJSON_Delete(pJson);
 						}

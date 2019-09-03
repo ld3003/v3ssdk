@@ -104,6 +104,15 @@ static void process_recv_serialport(int fd)
             snprintf(tmp, sizeof(tmp), "ERROR NOPIC\r\n");
             write(fd, tmp, strlen(tmp));
         }
+    }else
+    if (strstr(tmp, "AT+GETURL"))
+    {
+	    extern char geturl[];
+            extern char reqbuffer[512];
+
+	    snprintf(tmp, sizeof(tmp), "OK=%s\r\n",reqbuffer);
+	    write(fd, tmp, strlen(tmp));
+	    printf("GETURL ############################ %s \n",tmp);
     }
     else if (strstr(tmp, "AT+PUSHPIC"))
     {
