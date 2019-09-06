@@ -178,10 +178,10 @@ function build_demos()
 	pwd
 	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
 
-	cd $APP_DIR/demo-codec/
-	echo "*****************************************"
-	pwd
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
+	#cd $APP_DIR/demo-codec/
+	#echo "*****************************************"
+	#pwd
+	#make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
 
 	cd $APP_DIR/demo-qt
 	echo "*****************************************"

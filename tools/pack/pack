@@ -325,7 +325,7 @@ function do_prepare()
 		IMG_NAME="${IMG_NAME}_${PACK_FUNC}"
 	fi
 
-	IMG_NAME="fuck-pi.img"
+	IMG_NAME="rootfs.img"
 	echo "imagename = $IMG_NAME" >> out/image.cfg
 	echo "" >> out/image.cfg
 
