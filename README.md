@@ -1,5 +1,5 @@
 # v3s sdk
-
+、、、
   git clone --recursive https://github.com/ld3003/v3ssdk.git
 
   sudo apt install libc6:i386 
@@ -14,3 +14,5 @@
 
 
   git submodule update --remote --merge
+  
+  、、、
