@@ -6,3 +6,6 @@
 	path = linux-3.4
 	url = https://github.com/ld3003/v3ssdk-linux-3.4.git
 	branch = master
+[submodule "app"]
+	path = app
+	url = https://github.com/ld3003/v3ssdk-app.git
