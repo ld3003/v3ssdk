@@ -93,6 +93,9 @@ function build_kernel()
 	make ARCH=arm -j${logicalNumber} CROSS_COMPILE=${CROSS_COMPILE} uImage modules && \
 	make ARCH=arm CROSS_COMPILE=${CROSS_COMPILE} INSTALL_MOD_PATH=${ROOTFS_DIR} modules_install
   [ $? -ne 0 ] && echo "build kernel Failed"
+
+
+  	cp -v ./arch/arm/boot/uImage ../tools/pack/chips/sun8iw8p1/boot-resource/boot-resource/
 }
 
 function clean_kernel()
