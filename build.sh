@@ -169,6 +169,7 @@ function build_library()
 function build_demos()
 {
 
+	cp -v $APP_DIR/sdcard/*  ./tools/pack/chips/sun8iw8p1/boot-resource/boot-resource/
 	
 	cd $APP_DIR/demo-camera/
 	echo "*****************************************"
@@ -191,6 +192,9 @@ function build_demos()
 	pwd
   	$TOP_DIR/buildroot/out/host/bin/qmake
 	make -j${logicalNumber}
+	cp -v demo-qt  ../../tools/pack/chips/sun8iw8p1/boot-resource/boot-resource/
+
+
 
 	cd $APP_DIR/opencv
 	echo "*****************************************"
