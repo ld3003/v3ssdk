@@ -59,6 +59,12 @@ copy_file_list=(
     $PREBUILT_DIR/libs/*:$ROOTFS_DIR/lib/
 )
 
+
+#cp -v ./sysconf/standard_sys_config.fex tools/pack/chips/sun8iw8p1/configs/tiger-spinand-standard/sys_config.fex
+cd patch/standard/
+sh install.sh
+
+
 function copy_file_to_rootfs()
 {
   for line in ${copy_file_list[@]} ; do
@@ -168,87 +174,12 @@ function build_library()
 
 function build_demos()
 {
-
-	cp -v $APP_DIR/sdcard/*  ./tools/pack/chips/sun8iw8p1/boot-resource/boot-resource/
 	
-	cd $APP_DIR/demo-camera/
-	echo "*****************************************"
-	pwd
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} demo-camera
-	
+	cd $APP_DIR/
+	sh buildapp.sh
 
-	cd $APP_DIR/gpio/
-	echo "*****************************************"
-	pwd
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
+	cp -v $APP_DIR/sdcard/* $TOP_DIR/tools/pack/chips/sun8iw8p1/boot-resource/boot-resource/
 
-	#cd $APP_DIR/demo-codec/
-	#echo "*****************************************"
-	#pwd
-	#make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
-
-	cd $APP_DIR/demo-qt
-	echo "*****************************************"
-	pwd
-  	$TOP_DIR/buildroot/out/host/bin/qmake
-	make -j${logicalNumber}
-	cp -v demo-qt  ../../tools/pack/chips/sun8iw8p1/boot-resource/boot-resource/
-
-
-
-	cd $APP_DIR/opencv
-	echo "*****************************************"
-	pwd
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} test
-
-	cd $APP_DIR/curl
-	echo "*****************************************"
-	pwd
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} test
-
-
-	cd $APP_DIR/cam4g
-	echo "*****************************************"
-	pwd
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
-
-	cd $APP_DIR/opencv2fb
-	echo "*****************************************"
-	pwd
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
-
-
-	cd $APP_DIR/facedetectapp
-	echo "*****************************************"
-	pwd
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber}
-
-
-
-	cd $APP_DIR/serialport_linux/src
-	echo "*****************************************"
-	pwd
-	make CROSS_COMPILE=$BR_CROSS_COMPILE -j ${logicalNumber} 
-
-	cd $APP_DIR/facedetapp
-	echo "*****************************************"
-	pwd
-  	$TOP_DIR/buildroot/out/host/bin/qmake
-	make -j${logicalNumber}
-
-	cd $APP_DIR/qrcode
-	echo "*****************************************"
-	pwd
-  	$TOP_DIR/buildroot/out/host/bin/qmake
-	make -j${logicalNumber}
-
-	cd $APP_DIR/facenet/
-	echo "*****************************************"
-	pwd
-	mkdir build
-	cd build
-	cmake ../
-	make -j${logicalNumber}
 }
 
 function clean_demos()
