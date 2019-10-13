@@ -59,11 +59,12 @@ copy_file_list=(
     $PREBUILT_DIR/libs/*:$ROOTFS_DIR/lib/
 )
 
-
-#cp -v ./sysconf/standard_sys_config.fex tools/pack/chips/sun8iw8p1/configs/tiger-spinand-standard/sys_config.fex
-cd patch/standard/
-sh install.sh
-
+function patch()
+{
+	echo "ADD PATCH"
+	cd patch/standard/
+	sh install.sh
+}
 
 function copy_file_to_rootfs()
 {
@@ -197,6 +198,7 @@ function clean_demos()
 }
 
 if [ $# -eq 0 ] ; then
+	patch
 	build_buildroot
 	#build_uboot
 	build_kernel
