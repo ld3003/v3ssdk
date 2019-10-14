@@ -1,4 +1,4 @@
-#/bin/bash 
+#!/bin/bash
 
 physicalNumber=0
 coreNumber=0
@@ -40,26 +40,26 @@ BR_CROSS_COMPILE=$BUILDROOT_OUT_DIR/host/usr/bin/arm-buildroot-linux-gnueabihf-
 
 
 copy_file_list=(
-    $ROOTFS_OVERRIDE_DIR/etc/inittab:$ROOTFS_DIR/etc/inittab
-    $ROOTFS_OVERRIDE_DIR/etc/profile:$ROOTFS_DIR/etc/profile
-    $ROOTFS_OVERRIDE_DIR/etc/wpa_supplicant.conf:$ROOTFS_DIR/etc/wpa_supplicant.conf
-    $ROOTFS_OVERRIDE_DIR/etc/hostapd.conf:$ROOTFS_DIR/etc/hostapd.conf
-    $ROOTFS_OVERRIDE_DIR/etc/udhcpd.conf:$ROOTFS_DIR/etc/udhcpd.conf
-    $ROOTFS_OVERRIDE_DIR/etc/mdev.conf:$ROOTFS_DIR/etc/mdev.conf
-    $ROOTFS_OVERRIDE_DIR/etc/init.d/S50sshd:$ROOTFS_DIR/etc/init.d/
-    $ROOTFS_OVERRIDE_DIR/etc/init.d/S90camera:$ROOTFS_DIR/etc/init.d/
-    $ROOTFS_OVERRIDE_DIR/etc/init.d/S90wifiap:$ROOTFS_DIR/etc/init.d/_S90wifiap
-    $ROOTFS_OVERRIDE_DIR/etc/init.d/S90wifista:$ROOTFS_DIR/etc/init.d/_S90wifista
-    $ROOTFS_OVERRIDE_DIR/etc/init.d/S99appstart:$ROOTFS_DIR/etc/init.d/
-    $ROOTFS_OVERRIDE_DIR/etc/ssh/sshd_config:$ROOTFS_DIR/etc/ssh/
-    $ROOTFS_OVERRIDE_DIR/root/*.sh:$ROOTFS_DIR/root/
-    $ROOTFS_OVERRIDE_DIR/root/demo-h264enc:$ROOTFS_DIR/usr/bin/
-    $APP_DIR/demo-camera/demo-camera:$ROOTFS_DIR/usr/bin/
-    $APP_DIR/demo-qt/digitalclock:$ROOTFS_DIR/root/
-    $PREBUILT_DIR/libs/*:$ROOTFS_DIR/lib/
+$ROOTFS_OVERRIDE_DIR/etc/inittab:$ROOTFS_DIR/etc/inittab
+$ROOTFS_OVERRIDE_DIR/etc/profile:$ROOTFS_DIR/etc/profile
+$ROOTFS_OVERRIDE_DIR/etc/wpa_supplicant.conf:$ROOTFS_DIR/etc/wpa_supplicant.conf
+$ROOTFS_OVERRIDE_DIR/etc/hostapd.conf:$ROOTFS_DIR/etc/hostapd.conf
+$ROOTFS_OVERRIDE_DIR/etc/udhcpd.conf:$ROOTFS_DIR/etc/udhcpd.conf
+$ROOTFS_OVERRIDE_DIR/etc/mdev.conf:$ROOTFS_DIR/etc/mdev.conf
+$ROOTFS_OVERRIDE_DIR/etc/init.d/S50sshd:$ROOTFS_DIR/etc/init.d/
+$ROOTFS_OVERRIDE_DIR/etc/init.d/S90camera:$ROOTFS_DIR/etc/init.d/
+$ROOTFS_OVERRIDE_DIR/etc/init.d/S90wifiap:$ROOTFS_DIR/etc/init.d/_S90wifiap
+$ROOTFS_OVERRIDE_DIR/etc/init.d/S90wifista:$ROOTFS_DIR/etc/init.d/_S90wifista
+$ROOTFS_OVERRIDE_DIR/etc/init.d/S99appstart:$ROOTFS_DIR/etc/init.d/
+$ROOTFS_OVERRIDE_DIR/etc/ssh/sshd_config:$ROOTFS_DIR/etc/ssh/
+$ROOTFS_OVERRIDE_DIR/root/*.sh:$ROOTFS_DIR/root/
+$ROOTFS_OVERRIDE_DIR/root/demo-h264enc:$ROOTFS_DIR/usr/bin/
+$APP_DIR/demo-camera/demo-camera:$ROOTFS_DIR/usr/bin/
+$APP_DIR/demo-qt/digitalclock:$ROOTFS_DIR/root/
+$PREBUILT_DIR/libs/*:$ROOTFS_DIR/lib/
 )
 
-function patch()
+function copy_patch()
 {
 	echo "ADD PATCH"
 	cd patch/standard/
@@ -198,7 +198,7 @@ function clean_demos()
 }
 
 if [ $# -eq 0 ] ; then
-	patch
+	copy_patch
 	build_buildroot
 	#build_uboot
 	build_kernel

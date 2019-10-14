@@ -1,5 +1,5 @@
 #/bin/bash 
 
-cd /v3ssdk
+cd /media/user1/V3SSDK_BUILDROOT/v3ssdk
 
-sh build.sh
+bash build.sh
