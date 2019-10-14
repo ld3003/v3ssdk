@@ -179,7 +179,7 @@ function build_demos()
 	cd $APP_DIR/
 	sh buildapp.sh
 
-	cp -v $APP_DIR/sdcard/* $TOP_DIR/tools/pack/chips/sun8iw8p1/boot-resource/boot-resource/
+	cp -v $APP_DIR/sdcard/ $TOP_DIR/rootfs/root/bin/ -rf
 
 }
 

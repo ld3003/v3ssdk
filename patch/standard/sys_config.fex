@@ -422,7 +422,7 @@ cooler3 =  "648000 4 4294967295 0"
 ;lcd0_hue              (LCD hue, 0~100)
 ;----------------------------------------------------------------------------------
 [disp_init]
-disp_init_enable         = 0
+disp_init_enable         = 1
 disp_mode                = 0
 
 screen0_output_type      = 1
