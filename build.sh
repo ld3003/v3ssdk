@@ -28,7 +28,6 @@ basepath=$(cd $BASE_DIR; pwd)
 echo $basepath
 
 
-
 LD_LIBRARY_PATH=
 TOP_DIR=$basepath
 
