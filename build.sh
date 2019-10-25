@@ -27,6 +27,7 @@ fi
 basepath=$(cd $BASE_DIR; pwd)
 echo $basepath
 
+set -e
 
 LD_LIBRARY_PATH=
 TOP_DIR=$basepath
@@ -66,8 +67,8 @@ $ROOTFS_OVERRIDE_DIR/etc/ssh/sshd_config:$ROOTFS_DIR/etc/ssh/
 $ROOTFS_OVERRIDE_DIR/root/*.sh:$ROOTFS_DIR/root/
 $ROOTFS_OVERRIDE_DIR/root/demo-h264enc:$ROOTFS_DIR/usr/bin/
 $APP_DIR/demo-camera/demo-camera:$ROOTFS_DIR/usr/bin/
-$APP_DIR/demo-qt/digitalclock:$ROOTFS_DIR/root/
-$PREBUILT_DIR/libs/*:$ROOTFS_DIR/lib/
+#$APP_DIR/demo-qt/digitalclock:$ROOTFS_DIR/root/
+#$PREBUILT_DIR/libs/*:$ROOTFS_DIR/lib/
 )
 
 function copy_patch()
@@ -79,11 +80,13 @@ function copy_patch()
 
 function copy_file_to_rootfs()
 {
+	echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
   for line in ${copy_file_list[@]} ; do
 	  srcfile=`echo $line | awk -F: '{print $1}'`
 	  dstfile=`echo $line | awk -F: '{print $2}'`
-	  cp -drf $srcfile $dstfile 2>/dev/null
+	  cp -drf $srcfile $dstfile 
   done
+	echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 }
 
 function build_uboot()
@@ -188,7 +191,7 @@ function build_demos()
 {
 	
 	cd $APP_DIR/
-	sh buildapp.sh
+	bash buildapp.sh
 
 	cp -v $APP_DIR/sdcard/ $TOP_DIR/rootfs/root/bin/ -rf
 
@@ -213,7 +216,7 @@ if [ $# -eq 0 ] ; then
 	build_buildroot
 	#build_uboot
 	build_kernel
-	build_library
+	#build_library
 	build_demos
 	pack
 else
