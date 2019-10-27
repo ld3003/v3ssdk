@@ -80,13 +80,11 @@ function copy_patch()
 
 function copy_file_to_rootfs()
 {
-	echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
   for line in ${copy_file_list[@]} ; do
 	  srcfile=`echo $line | awk -F: '{print $1}'`
 	  dstfile=`echo $line | awk -F: '{print $2}'`
 	  cp -drf $srcfile $dstfile 
   done
-	echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 }
 
 function build_uboot()
@@ -96,7 +94,7 @@ function build_uboot()
 	make -j${logicalNumber} CROSS_COMPILE=${CROSS_COMPILE} sun8iw8p1_spinand_emmc && \
 	make -j${logicalNumber} CROSS_COMPILE=${CROSS_COMPILE} fes && \
   	make -j${logicalNumber} CROSS_COMPILE=${CROSS_COMPILE} boot0
-  [ $? -ne 0 ] && echo "build u-boot Failed"
+ 	[ $? -ne 0 ] && echo "build u-boot Failed"
 }
 
 function clean_uboot()
@@ -107,13 +105,15 @@ function clean_uboot()
 
 function build_kernel()
 {
+	apt-get install kmod -y
+
 	cd $KERNEL_DIR
 	
-	#make ARCH=arm -j4 CROSS_COMPILE=${CROSS_COMPILE} mangopi_defconfig && \
+	make ARCH=arm -j4 CROSS_COMPILE=${CROSS_COMPILE} mangopi_defconfig && \
 	make ARCH=arm -j${logicalNumber} CROSS_COMPILE=${CROSS_COMPILE} && \
 	make ARCH=arm -j${logicalNumber} CROSS_COMPILE=${CROSS_COMPILE} uImage modules && \
 	make ARCH=arm CROSS_COMPILE=${CROSS_COMPILE} INSTALL_MOD_PATH=${ROOTFS_DIR} modules_install
-  [ $? -ne 0 ] && echo "build kernel Failed"
+  	[ $? -ne 0 ] && echo "build kernel Failed"
 
 
   	cp -v ./arch/arm/boot/uImage ../tools/pack/chips/sun8iw8p1/boot-resource/boot-resource/
