@@ -140,6 +140,7 @@ function build_buildroot()
 	
 	make O=$BUILDROOT_OUT_DIR 
 
+	mkdir -p $ROOTFS_DIR
 	rm -r $ROOTFS_DIR
 	mkdir -p $ROOTFS_DIR
 	
