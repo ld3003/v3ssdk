@@ -109,7 +109,6 @@ function build_kernel()
 
 	cd $KERNEL_DIR
 	
-	make ARCH=arm -j4 CROSS_COMPILE=${CROSS_COMPILE} mangopi_defconfig && \
 	make ARCH=arm -j${logicalNumber} CROSS_COMPILE=${CROSS_COMPILE} && \
 	make ARCH=arm -j${logicalNumber} CROSS_COMPILE=${CROSS_COMPILE} uImage modules && \
 	make ARCH=arm CROSS_COMPILE=${CROSS_COMPILE} INSTALL_MOD_PATH=${ROOTFS_DIR} modules_install
