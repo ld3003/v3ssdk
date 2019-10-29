@@ -10,4 +10,4 @@ fi
 # 创建公用网络==bridge模式
 #docker network create share_network
 
-sudo docker run -it -v $TOP_DIR:$TOP_DIR ld3003/v3s_env /bin/bash $TOP_DIR/build.sh
+sudo docker run -it -v $TOP_DIR:$TOP_DIR ld3003/v3s_env /bin/bash $TOP_DIR/build.sh $1
