@@ -74,8 +74,6 @@ $APP_DIR/demo-camera/demo-camera:$ROOTFS_DIR/usr/bin/
 function copy_patch()
 {
 	echo "ADD PATCH"
-	cd patch/standard/
-	sh install.sh
 }
 
 function copy_file_to_rootfs()
