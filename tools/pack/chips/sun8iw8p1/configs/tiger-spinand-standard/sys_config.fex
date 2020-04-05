@@ -345,18 +345,18 @@ spinand_used = 0
 ;ctp_wakeup : port for wakeup tp
 ;----------------------------------------------------------------------------------
 [ctp_para]
-ctp_used            = 0
+ctp_used            = 1
 ctp_name            = "gt911_m785q6"
-ctp_twi_id          = 1
+ctp_twi_id          = 0
 ctp_twi_addr        = 0x5d
-ctp_screen_max_x    = 800
-ctp_screen_max_y    = 480
+ctp_screen_max_x    = 1024
+ctp_screen_max_y    = 600
 ctp_revert_x_flag   = 0
 ctp_revert_y_flag   = 0
 ctp_exchange_x_y_flag = 1
 
-ctp_int_port        = port:PG04<6><default><default><default>
-ctp_wakeup          = port:PG03<1><default><default><1>
+ctp_int_port        = port:PB04<6><default><default><default>
+ctp_wakeup          = port:PB02<1><default><default><1>
 
 ;--------------------------------------------------------------------------------
 ; CTP automatic detection configuration
@@ -364,15 +364,15 @@ ctp_wakeup          = port:PG03<1><default><default><1>
 ;Module name postposition 1 said detection, 0 means no detection. 
 ;--------------------------------------------------------------------------------
 [ctp_list_para]
-ctp_det_used              = 0
+ctp_det_used              = 1
 gt911_ts                  = 1
-ft5x_ts                   = 1
-gt82x                     = 1
-gslX680                   = 1
-gt9xx_ts                  = 1
-gt811                     = 1
-zet622x                   = 1
-aw5306_ts                 = 1
+ft5x_ts                   = 0
+gt82x                     = 0
+gslX680                   = 0
+gt9xx_ts                  = 0
+gt811                     = 0
+zet622x                   = 0
+aw5306_ts                 = 0
 
 ;----------------------------------------------------------------------------------
 ;touch key configuration
@@ -432,8 +432,8 @@ screen1_output_type      = 1
 screen1_output_mode      = 4
 
 fb0_format               = 0
-fb0_pixel_sequence       = 0
-fb0_scaler_mode_enable   = 0
+fb0_pixel_sequence       = 1
+fb0_scaler_mode_enable   = 1
 fb0_width                = 0
 fb0_height               = 0
 
@@ -455,6 +455,10 @@ lcd1_bright              = 50
 lcd1_contrast            = 50
 lcd1_saturation          = 57
 lcd1_hue                 = 50
+
+[state_sw]
+used = 1
+degree0 = 0
 
 ;----------------------------------------------------------------------------------
 ;lcd0 configuration
@@ -489,31 +493,37 @@ lcd1_hue                 = 50
 ;smart_color           90:normal lcd screen 65:retina lcd screen(9.7inch)
 ;----------------------------------------------------------------------------------
 [lcd0_para]
-lcd_used            = 0
+lcd_used            = 1
 lcd_driver_name     = "vs043con08v0"
 lcd_if              = 0
-lcd_x               = 480
-lcd_y               = 272
-lcd_width           = 0
-lcd_height          = 0
-lcd_dclk_freq       = 10
+lcd_x               = 1024
+lcd_y               = 600
+lcd_width           = 154
+lcd_height          = 85
+lcd_dclk_freq       = 51
 lcd_pwm_used        = 1
 lcd_pwm_ch          = 0
 lcd_pwm_freq        = 50000
 lcd_pwm_pol         = 1
 lcd_pwm_max_limit   = 255
-lcd_hbp             = 43
-lcd_ht              = 531
-lcd_hspw            = 1
-lcd_vbp             = 12
-lcd_vt              = 288
-lcd_vspw            = 1
+lcd_hbp             = 300
+lcd_ht              = 1344
+lcd_hspw            = 20
+lcd_vbp             = 30
+lcd_vt              = 635
+lcd_vspw            = 5
 lcd_frm             = 0
 lcd_hv_clk_phase    = 0
+
 lcd_hv_sync_polarity = 0
 lcd_gamma_en        = 0
 lcd_bright_curve_en = 1
 lcd_cmap_en         = 0
+
+lcd_hv_if               = 0
+lcd_hv_srgb_seq     = 0
+lcd_rb_swap                     = 0
+lcd_rgb_endian = 0
 
 lcdgamma4iep        = 22
 
@@ -537,10 +547,8 @@ lcdd18              = port:PE16<3><0><default><default>
 lcdd19              = port:PE17<3><0><default><default>
 lcdd20              = port:PE18<3><0><default><default>
 lcdd21              = port:PE19<3><0><default><default>
-
 lcdd22              = port:PE23<3><0><default><default>
 lcdd23              = port:PE24<3><0><default><default>
-
 lcdclk              = port:PE00<3><0><3><default>
 lcdde               = port:PE01<3><0><3><default>
 lcdhsync            = port:PE02<3><0><3><default>
@@ -676,7 +684,7 @@ vip_dev1_flash_mode      =
 vip_dev1_af_pwdn         =
 
 [csi1]
-vip_used                 = 1
+vip_used                 = 0
 vip_mode                 = 0
 vip_dev_qty              = 1
 vip_define_sensor_list   = 0
